@@ -22,7 +22,7 @@ fn main() {
 
     let argv: Vec<String> = env::args().collect();
 
-    let n: u64 = match argv.len() {
+    let n: usize = match argv.len() {
         2 => argv[1].parse().unwrap(),
         _ => {
             println!("usage: {} $PROBLEM_NUMBER", argv[0]);
@@ -53,7 +53,7 @@ fn main() {
           (1) chronal_calibration
           (2) inventory_management_system
           (3) no_matter_how_you_slice_it
-          (4) RENAME_ME_PROBLEM_FOUR
+          (4) repose_record
     };
 
     println!("          day {} of 25", n);
@@ -243,14 +243,173 @@ fn no_matter_how_you_slice_it(input: Vec<&str>) {
     panic!("3b. failed?");
 }
 
-fn RENAME_ME_PROBLEM_FOUR(input: Vec<&str>) {
-    #[derive(Debug)]
-    struct Something {}
-
-    let mut values = Vec::new();
-    for _line in input {
-        values.push(Something {});
+fn repose_record(input: Vec<&str>) {
+    #[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
+    struct Event {
+        year: usize,
+        month: usize,
+        day: usize,
+        hour: usize,
+        minute: usize,
+        event_type: Type,
     }
 
-    println!("{:#?}", values);
+    #[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
+    enum Type {
+        // shift change to specified new guard id
+        ShiftChange(usize),
+        FallsAsleep,
+        WakesUp,
+    }
+
+    // [1518-11-01 00:30] falls asleep
+    // [1518-11-01 00:55] wakes up
+    // [1518-11-01 23:58] Guard #99 begins shift
+
+    let mut events = Vec::new();
+    for line in input {
+        let rest = line.chars();
+        let rest = rest.skip_while(is_not_digit);
+        let year_str: String = rest.clone().take_while(is_digit).collect();
+        let rest = rest.skip_while(is_digit).skip_while(is_not_digit);
+        let month_str: String = rest.clone().take_while(is_digit).collect();
+        let rest = rest.skip_while(is_digit).skip_while(is_not_digit);
+        let day_str: String = rest.clone().take_while(is_digit).collect();
+        let rest = rest.skip_while(is_digit).skip_while(is_not_digit);
+        let hour_str: String = rest.clone().take_while(is_digit).collect();
+        let rest = rest.skip_while(is_digit).skip_while(is_not_digit);
+        let minute_str: String = rest.clone().take_while(is_digit).collect();
+        let s: String = rest.clone().collect();
+
+        let event_type = if s.contains("falls asleep") {
+            Type::FallsAsleep
+        } else if s.contains("wakes up") {
+            Type::WakesUp
+        } else {
+            let rest = rest.skip_while(is_digit).skip_while(is_not_digit);
+            let guard_id_str: String = rest.clone().take_while(is_digit).collect();
+            Type::ShiftChange(guard_id_str.parse().unwrap())
+        };
+
+        events.push(Event {
+            year: year_str.parse().unwrap(),
+            month: month_str.parse().unwrap(),
+            day: day_str.parse().unwrap(),
+            hour: hour_str.parse().unwrap(),
+            minute: minute_str.parse().unwrap(),
+            event_type: event_type,
+        });
+    }
+
+    events.sort();
+
+    let mut minutes_sleep_frequencies_by_guard_id = HashMap::<usize, Vec<usize>>::new();
+
+    let mut guard_ids: HashSet<usize> = HashSet::new();
+    for event in events.iter() {
+        if let Type::ShiftChange(guard_id) = event.event_type {
+            if !guard_ids.contains(&guard_id) {
+                minutes_sleep_frequencies_by_guard_id.insert(guard_id, vec![0; 60]);
+                guard_ids.insert(guard_id);
+            }
+        }
+    }
+
+    let mut current_guard: Option<usize> = None;
+    let mut current_sleep_start_minute: Option<usize> = None;
+    for event in events.iter() {
+        match event.event_type {
+            Type::ShiftChange(guard_id) => {
+                if let Some(start_minute) = current_sleep_start_minute {
+                    if let Some(old_guard_id) = current_guard {
+                        let mut m = start_minute;
+                        loop {
+                            if m == event.minute {
+                                break;
+                            }
+
+                            minutes_sleep_frequencies_by_guard_id
+                                .get_mut(&old_guard_id)
+                                .unwrap()[m] += 1;
+
+                            m = (m + 1) % 60;
+                        }
+                    }
+                }
+                current_guard = Some(guard_id);
+                current_sleep_start_minute = None;
+            }
+            Type::WakesUp => {
+                if let Some(start_minute) = current_sleep_start_minute {
+                    if let Some(old_guard_id) = current_guard {
+                        let mut m = start_minute;
+                        loop {
+                            if m == event.minute {
+                                break;
+                            }
+
+                            minutes_sleep_frequencies_by_guard_id
+                                .get_mut(&old_guard_id)
+                                .unwrap()[m] += 1;
+
+                            m = (m + 1) % 60;
+                        }
+                    }
+                }
+                current_sleep_start_minute = None;
+            }
+            Type::FallsAsleep => {
+                current_sleep_start_minute = Some(event.minute);
+            }
+        }
+    }
+
+    let mut max_sum = 0;
+    let mut max_sum_guard_id = 0;
+    let mut max_sum_minute = 0;
+    let mut total_minutes_slept_by_guard_id: HashMap<usize, usize> = HashMap::new();
+    for (guard_id, minutes) in minutes_sleep_frequencies_by_guard_id.iter() {
+        let sum = minutes.iter().sum();
+        if sum > max_sum {
+            max_sum_guard_id = *guard_id;
+            max_sum = sum;
+            let mut max_egsegesgesges = 0;
+            max_sum_minute = 0;
+            for (i, i_minutes) in minutes.iter().enumerate() {
+                if *i_minutes > max_egsegesgesges {
+                    max_sum_minute = i;
+                    max_egsegesgesges = *i_minutes;
+                }
+            }
+        }
+        total_minutes_slept_by_guard_id.insert(*guard_id, sum);
+    }
+
+    println!(
+        "  4a. guard id minute product: {}",
+        max_sum_guard_id * max_sum_minute
+    );
+
+    let mut max_sum = 0;
+    let mut max_sum_guard_id = 0;
+    let mut max_sum_minute = 0;
+    let mut max_egsegesgesges = 0;
+    let mut total_minutes_slept_by_guard_id: HashMap<usize, usize> = HashMap::new();
+    for (guard_id, minutes) in minutes_sleep_frequencies_by_guard_id.iter() {
+        let sum = minutes.iter().sum();
+        max_sum = sum;
+        for (i, i_minutes) in minutes.iter().enumerate() {
+            if *i_minutes > max_egsegesgesges {
+                max_sum_guard_id = *guard_id;
+                max_sum_minute = i;
+                max_egsegesgesges = *i_minutes;
+            }
+        }
+        total_minutes_slept_by_guard_id.insert(*guard_id, sum);
+    }
+
+    println!(
+        "  4b. guard id minute product: {}",
+        max_sum_guard_id * max_sum_minute
+    );
 }

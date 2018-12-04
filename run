@@ -3,6 +3,7 @@ set -euo pipefail;
 cargo +nightly fmt;
 cargo +nightly fix --allow-dirty --allow-staged;
 cargo +nightly clippy;
+clear;
 cargo +nightly build --release;
 clear;
 target/release/aoc-2018 "$@" || (
