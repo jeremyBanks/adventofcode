@@ -2,6 +2,14 @@
 set -euo pipefail;
 cargo +nightly fmt;
 cargo +nightly fix --allow-dirty --allow-staged;
-cargo +nightly build;
+cargo +nightly clippy;
+cargo +nightly build --release;
 clear;
-target/debug/aoc-2018 "$@";
+target/release/aoc-2018 "$@" || (
+    s=$?;
+    clear;
+    echo "$(tput setaf 1)Program exited with status $s. Trying again with debug profile...$(tput sgr0)";
+    set -x;
+    cargo +nightly build;
+    RUST_BACKTRACE=1 target/debug/aoc-2018 "$@";
+);

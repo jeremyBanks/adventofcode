@@ -1,6 +1,11 @@
+#![feature(duration_as_u128)]
+#![allow(unused_imports)]
+#![allow(range_contains)]
+
 use std::{
-    collections::{BTreeMap, BTreeSet},
+    collections::{BTreeMap, BTreeSet, HashMap, HashSet},
     env, fs,
+    time::Instant,
 };
 
 use itertools::Itertools;
@@ -44,6 +49,7 @@ fn main() {
 
           (1) chronal_calibration
           (2) inventory_management_system
+          (3) no_matter_how_you_slice_it
     };
 
     println!("          day {} of 25", n);
@@ -56,8 +62,18 @@ fn main() {
     let input = fs::read_to_string(format!("input/{}.txt", n)).expect("Failed to load input.");
     let lines = input.split("\n").filter(|s| s.len() > 0).collect();
 
+    let before = Instant::now();
     solution(lines);
+    let after = Instant::now();
 
+    let delta = (after - before).as_micros();
+
+    println!("");
+    println!("");
+    println!("");
+    println!("  ⏱  {:>6}µs", delta);
+    println!("");
+    println!("");
     println!("");
 }
 
@@ -89,7 +105,7 @@ fn inventory_management_system(input: Vec<&str>) {
     let mut threes = 0;
 
     for line in input.iter() {
-        let mut frequencies = BTreeMap::new();
+        let mut frequencies = HashMap::new();
 
         for letter in line.chars() {
             if frequencies.contains_key(&letter) {
@@ -111,5 +127,94 @@ fn inventory_management_system(input: Vec<&str>) {
     let warehouse_checksum = twos * threes;
     println!("  2a. warehouse checksum: {}", warehouse_checksum);
 
-    println!("  2b. hmm well how many do we have? {}", input.len());
+    fn id_variations(id: &str) -> Vec<String> {
+        let id_chars: Vec<char> = id.chars().collect();
+        let mut result = Vec::new();
+        for index in 0..id_chars.len() {
+            let variation_chars = id_chars.clone();
+            let variation: String = variation_chars
+                .iter()
+                .enumerate()
+                .map(|x| if x.0 != index { x.1 } else { &'_' })
+                .collect();
+            result.push(variation);
+        }
+        result
+    }
+
+    let mut seen_ids_by_variation = HashMap::new();
+    let mut result: Option<String> = None;
+    'out: for id in input.iter() {
+        for variation in id_variations(id) {
+            if let Some(_adjacent_id) = seen_ids_by_variation.get(&variation) {
+                result = Some(variation.chars().filter(|c| *c != '_').collect());
+                break 'out;
+            } else {
+                seen_ids_by_variation.insert(variation, id);
+            }
+        }
+    }
+    println!("  2b. id overlap: {}", result.unwrap());
+}
+
+fn no_matter_how_you_slice_it(input: Vec<&str>) {
+    #[derive(Debug)]
+    struct Claim {
+        id: u64,
+        x: u64,
+        y: u64,
+        width: u64,
+        height: u64,
+    }
+
+    let mut claims = Vec::new();
+
+    let is_digit = |c| ('0'..='9').contains;
+    let is_not_digit = |c| ('0'..='9').contains(c);
+
+    for line in input {
+        let rest = line.chars();
+        // example:
+        // #11 @ 755,237: 24x22
+        let rest = rest.skip_while(is_not_digit).iter();
+        let id_str: String = rest.take_while(is_digit).collect();
+        let rest = rest
+            .skip_while(is_digit)
+            .iter()
+            .skip_while(is_not_digit)
+            .iter();
+        let x_str: String = rest.take_while(is_digit).collect();
+        let rest = rest
+            .skip_while(is_digit)
+            .iter()
+            .skip_while(is_not_digit)
+            .iter();
+        let y_str: String = rest.take_while(is_digit).collect();
+        let rest = rest
+            .skip_while(is_digit)
+            .iter()
+            .skip_while(is_not_digit)
+            .iter();
+        let width_str: String = rest.take_while(is_digit).collect();
+        let rest = rest
+            .skip_while(is_digit)
+            .iter()
+            .skip_while(is_not_digit)
+            .iter();
+        let height_str: String = rest.take_while(is_digit).collect();
+        let rest = rest
+            .skip_while(is_digit)
+            .iter()
+            .skip_while(is_not_digit)
+            .iter();
+        claims.push(Claim {
+            id: id_str.parse().unwrap(),
+            x: x_str.parse().unwrap(),
+            y: y_str.parse().unwrap(),
+            width: width_str.parse().unwrap(),
+            height: height_str.parse().unwrap(),
+        });
+    }
+
+    println!("{:?}", claims);
 }
