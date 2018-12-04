@@ -2,6 +2,9 @@
 #![allow(unused_imports)]
 #![feature(range_contains)]
 
+#[macro_use]
+extern crate derive_more;
+
 use std::{
     collections::{BTreeMap, BTreeSet, HashMap, HashSet},
     env, fs,
@@ -34,12 +37,12 @@ fn main() {
         } => {
             let $name = match $n {
                 $( $number => stringify!($fn), )*
-                _ => panic!("invalid problem number"),
+                _ => unimplemented!("unrecognized problem number"),
             };
 
             let $solution = match $n {
                 $( $number => $fn, )*
-                _ => panic!("invalid problem number"),
+                _ => unimplemented!("unrecognized problem number"),
             };
         }
     }
@@ -50,6 +53,7 @@ fn main() {
           (1) chronal_calibration
           (2) inventory_management_system
           (3) no_matter_how_you_slice_it
+          (4) RENAME_ME_PROBLEM_FOUR
     };
 
     println!("          day {} of 25", n);
@@ -237,4 +241,16 @@ fn no_matter_how_you_slice_it(input: Vec<&str>) {
     }
 
     panic!("3b. failed?");
+}
+
+fn RENAME_ME_PROBLEM_FOUR(input: Vec<&str>) {
+    #[derive(Debug)]
+    struct Something {}
+
+    let mut values = Vec::new();
+    for _line in input {
+        values.push(Something {});
+    }
+
+    println!("{:#?}", values);
 }
