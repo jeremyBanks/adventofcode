@@ -1,6 +1,6 @@
 #![feature(duration_as_u128)]
 #![allow(unused_imports)]
-#![allow(range_contains)]
+#![feature(range_contains)]
 
 use std::{
     collections::{BTreeMap, BTreeSet, HashMap, HashSet},
@@ -157,56 +157,40 @@ fn inventory_management_system(input: Vec<&str>) {
     println!("  2b. id overlap: {}", result.unwrap());
 }
 
+fn is_digit(c: &char) -> bool {
+    ('0'..='9').contains(c)
+}
+
+fn is_not_digit(c: &char) -> bool {
+    !('0'..='9').contains(c)
+}
+
 fn no_matter_how_you_slice_it(input: Vec<&str>) {
     #[derive(Debug)]
     struct Claim {
-        id: u64,
-        x: u64,
-        y: u64,
-        width: u64,
-        height: u64,
+        id: usize,
+        x: usize,
+        y: usize,
+        width: usize,
+        height: usize,
     }
 
     let mut claims = Vec::new();
-
-    let is_digit = |c| ('0'..='9').contains;
-    let is_not_digit = |c| ('0'..='9').contains(c);
 
     for line in input {
         let rest = line.chars();
         // example:
         // #11 @ 755,237: 24x22
-        let rest = rest.skip_while(is_not_digit).iter();
-        let id_str: String = rest.take_while(is_digit).collect();
-        let rest = rest
-            .skip_while(is_digit)
-            .iter()
-            .skip_while(is_not_digit)
-            .iter();
-        let x_str: String = rest.take_while(is_digit).collect();
-        let rest = rest
-            .skip_while(is_digit)
-            .iter()
-            .skip_while(is_not_digit)
-            .iter();
-        let y_str: String = rest.take_while(is_digit).collect();
-        let rest = rest
-            .skip_while(is_digit)
-            .iter()
-            .skip_while(is_not_digit)
-            .iter();
-        let width_str: String = rest.take_while(is_digit).collect();
-        let rest = rest
-            .skip_while(is_digit)
-            .iter()
-            .skip_while(is_not_digit)
-            .iter();
-        let height_str: String = rest.take_while(is_digit).collect();
-        let rest = rest
-            .skip_while(is_digit)
-            .iter()
-            .skip_while(is_not_digit)
-            .iter();
+        let rest = rest.skip_while(is_not_digit);
+        let id_str: String = rest.clone().take_while(is_digit).collect();
+        let rest = rest.skip_while(is_digit).skip_while(is_not_digit);
+        let x_str: String = rest.clone().take_while(is_digit).collect();
+        let rest = rest.skip_while(is_digit).skip_while(is_not_digit);
+        let y_str: String = rest.clone().take_while(is_digit).collect();
+        let rest = rest.skip_while(is_digit).skip_while(is_not_digit);
+        let width_str: String = rest.clone().take_while(is_digit).collect();
+        let rest = rest.skip_while(is_digit).skip_while(is_not_digit);
+        let height_str: String = rest.clone().take_while(is_digit).collect();
         claims.push(Claim {
             id: id_str.parse().unwrap(),
             x: x_str.parse().unwrap(),
@@ -216,5 +200,41 @@ fn no_matter_how_you_slice_it(input: Vec<&str>) {
         });
     }
 
-    println!("{:?}", claims);
+    let mut cell_counts = vec![0u32; 1_000_000];
+    let mut overcommitted_square_inches = 0;
+    for claim in claims.iter() {
+        for x in claim.x..(claim.x + claim.width) {
+            for y in claim.y..(claim.y + claim.height) {
+                let index = y * 1000 + x;
+                cell_counts[index] += 1;
+                // count the cell only the first time it becomes overcommitted
+                if cell_counts[index] == 2 {
+                    overcommitted_square_inches += 1;
+                }
+            }
+        }
+    }
+    println!(
+        "  3a. overcommitted square inches: {}",
+        overcommitted_square_inches
+    );
+
+    for claim in claims.iter() {
+        let mut all_good = true;
+        'out: for x in claim.x..(claim.x + claim.width) {
+            for y in claim.y..(claim.y + claim.height) {
+                let index = y * 1000 + x;
+                if cell_counts[index] > 1 {
+                    all_good = false;
+                    break 'out;
+                }
+            }
+        }
+        if all_good {
+            println!("  3b. uncontested claim: {:#?}", claim);
+            return;
+        }
+    }
+
+    panic!("3b. failed?");
 }
