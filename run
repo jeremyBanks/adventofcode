@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail;
-cargo fmt;
-cargo fix --allow-dirty --allow-staged;
-cargo build;
+cargo +nightly fmt;
+cargo +nightly fix --allow-dirty --allow-staged;
+cargo +nightly build;
 clear;
 target/debug/aoc-2018 "$@";
