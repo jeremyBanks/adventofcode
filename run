@@ -4,12 +4,13 @@ cargo +nightly fmt;
 cargo +nightly fix --allow-dirty --allow-staged;
 cargo +nightly clippy;
 clear;
-cargo +nightly build --release;
+cargo +nightly build;
 clear;
-target/release/aoc-2018 "$@" || (
+(target/debug/aoc-2018 "$@" && 
+cargo +nightly build --release && clear && target/release/aoc-2018 "$@") || (
     s=$?;
     clear;
-    echo "$(tput setaf 1)Program exited with status $s. Trying again with debug profile...$(tput sgr0)";
+    echo "$(tput setaf 1)Program exited with status $s. Trying again for debugging...$(tput sgr0)";
     set -x;
     cargo +nightly build;
     RUST_BACKTRACE=1 target/debug/aoc-2018 "$@";

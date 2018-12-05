@@ -11,6 +11,8 @@ use std::{
     time::Instant,
 };
 
+use regex::Regex;
+
 use itertools::Itertools;
 
 fn main() {
@@ -54,6 +56,7 @@ fn main() {
           (2) inventory_management_system
           (3) no_matter_how_you_slice_it
           (4) repose_record
+          (5) alchemical_reduction
     };
 
     println!("          day {} of 25", n);
@@ -82,29 +85,40 @@ fn main() {
 }
 
 fn chronal_calibration(input: Vec<&str>) {
-    let numbers: Vec<i64> = input
+    let expected_1a = 580;
+    let expected_1b = 81972;
+
+    let numbers: Vec<isize> = input
         .iter()
         .map(|s| s.parse().expect("non-integer in input"))
         .collect();
-    println!(
-        "  1a. frequency sum: {}",
-        numbers.iter().cloned().sum::<i64>()
-    );
+    let solution_1a = numbers.iter().cloned().sum::<isize>();
 
-    let mut seen = BTreeSet::new();
-    let mut sum: i64 = 0;
+    println!("  1a. frequency sum: {}", solution_1a);
+
+    let mut seen = HashSet::new();
+    let mut sum: isize = 0;
+    let mut solution_1b = None;
     for number in numbers.iter().cycle() {
         sum += number;
         if seen.contains(&sum) {
+            solution_1b = Some(sum);
             println!("  1b. first repeated sum: {}", &sum);
             break;
         } else {
             seen.insert(sum.clone());
         }
     }
+    let solution_1b = solution_1b.unwrap();
+
+    assert_eq!(expected_1a, solution_1a);
+    assert_eq!(expected_1b, solution_1b);
 }
 
 fn inventory_management_system(input: Vec<&str>) {
+    let expected_2a = 9139;
+    let expected_2b = "uqcidadzwtnhsljvxyobmkfyr";
+
     let mut twos = 0;
     let mut threes = 0;
 
@@ -130,6 +144,7 @@ fn inventory_management_system(input: Vec<&str>) {
 
     let warehouse_checksum = twos * threes;
     println!("  2a. warehouse checksum: {}", warehouse_checksum);
+    let solution_2a = warehouse_checksum;
 
     fn id_variations(id: &str) -> Vec<String> {
         let id_chars: Vec<char> = id.chars().collect();
@@ -158,7 +173,11 @@ fn inventory_management_system(input: Vec<&str>) {
             }
         }
     }
-    println!("  2b. id overlap: {}", result.unwrap());
+    let solution_2b = result.unwrap();
+    println!("  2b. id overlap: {}", solution_2b);
+
+    assert_eq!(expected_2a, solution_2a);
+    assert_eq!(expected_2b, solution_2b);
 }
 
 fn is_digit(c: &char) -> bool {
@@ -170,7 +189,10 @@ fn is_not_digit(c: &char) -> bool {
 }
 
 fn no_matter_how_you_slice_it(input: Vec<&str>) {
-    #[derive(Debug)]
+    let expected_3a = 112378;
+    let expected_3b = 603;
+
+    #[derive(Clone, Debug)]
     struct Claim {
         id: usize,
         x: usize,
@@ -181,26 +203,32 @@ fn no_matter_how_you_slice_it(input: Vec<&str>) {
 
     let mut claims = Vec::new();
 
+    // example:
+    // #11 @ 755,237: 24x22
+    let pattern = Regex::new(
+        r"(?x)
+        ^\#
+        (?P<id>\d+)
+        \s@\s
+        (?P<x>\d+)
+        ,
+        (?P<y>\d+)
+        :\s
+        (?P<width>\d+)
+        x
+        (?P<height>\d+)
+        $",
+    )
+    .unwrap();
+
     for line in input {
-        let rest = line.chars();
-        // example:
-        // #11 @ 755,237: 24x22
-        let rest = rest.skip_while(is_not_digit);
-        let id_str: String = rest.clone().take_while(is_digit).collect();
-        let rest = rest.skip_while(is_digit).skip_while(is_not_digit);
-        let x_str: String = rest.clone().take_while(is_digit).collect();
-        let rest = rest.skip_while(is_digit).skip_while(is_not_digit);
-        let y_str: String = rest.clone().take_while(is_digit).collect();
-        let rest = rest.skip_while(is_digit).skip_while(is_not_digit);
-        let width_str: String = rest.clone().take_while(is_digit).collect();
-        let rest = rest.skip_while(is_digit).skip_while(is_not_digit);
-        let height_str: String = rest.clone().take_while(is_digit).collect();
+        let pieces = pattern.captures(line).unwrap();
         claims.push(Claim {
-            id: id_str.parse().unwrap(),
-            x: x_str.parse().unwrap(),
-            y: y_str.parse().unwrap(),
-            width: width_str.parse().unwrap(),
-            height: height_str.parse().unwrap(),
+            id: pieces["id"].parse().unwrap(),
+            x: pieces["x"].parse().unwrap(),
+            y: pieces["y"].parse().unwrap(),
+            width: pieces["width"].parse().unwrap(),
+            height: pieces["height"].parse().unwrap(),
         });
     }
 
@@ -222,6 +250,9 @@ fn no_matter_how_you_slice_it(input: Vec<&str>) {
         "  3a. overcommitted square inches: {}",
         overcommitted_square_inches
     );
+    let solution_3a = overcommitted_square_inches;
+
+    let mut solution_3b = None;
 
     for claim in claims.iter() {
         let mut all_good = true;
@@ -235,16 +266,22 @@ fn no_matter_how_you_slice_it(input: Vec<&str>) {
             }
         }
         if all_good {
-            println!("  3b. uncontested claim: {:#?}", claim);
-            return;
+            solution_3b = Some(claim.id.clone());
+            println!("  3b. uncontested claim: #{}", claim.id);
         }
     }
 
-    panic!("3b. failed?");
+    let solution_3b = solution_3b.unwrap();
+
+    assert_eq!(expected_3a, solution_3a);
+    assert_eq!(expected_3b, solution_3b);
 }
 
 fn repose_record(input: Vec<&str>) {
-    #[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
+    let expected_4a = 94542;
+    let expected_4b = 50966;
+
+    #[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq)]
     struct Event {
         year: usize,
         month: usize,
@@ -254,7 +291,7 @@ fn repose_record(input: Vec<&str>) {
         event_type: Type,
     }
 
-    #[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
+    #[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq)]
     enum Type {
         // shift change to specified new guard id
         ShiftChange(usize),
@@ -385,19 +422,15 @@ fn repose_record(input: Vec<&str>) {
         total_minutes_slept_by_guard_id.insert(*guard_id, sum);
     }
 
-    println!(
-        "  4a. guard id minute product: {}",
-        max_sum_guard_id * max_sum_minute
-    );
+    let solution_4a = max_sum_guard_id * max_sum_minute;
+    println!("  4a. {}", solution_4a);
 
-    let mut max_sum = 0;
     let mut max_sum_guard_id = 0;
     let mut max_sum_minute = 0;
     let mut max_egsegesgesges = 0;
     let mut total_minutes_slept_by_guard_id: HashMap<usize, usize> = HashMap::new();
     for (guard_id, minutes) in minutes_sleep_frequencies_by_guard_id.iter() {
         let sum = minutes.iter().sum();
-        max_sum = sum;
         for (i, i_minutes) in minutes.iter().enumerate() {
             if *i_minutes > max_egsegesgesges {
                 max_sum_guard_id = *guard_id;
@@ -408,8 +441,24 @@ fn repose_record(input: Vec<&str>) {
         total_minutes_slept_by_guard_id.insert(*guard_id, sum);
     }
 
-    println!(
-        "  4b. guard id minute product: {}",
-        max_sum_guard_id * max_sum_minute
-    );
+    let solution_4b = max_sum_guard_id * max_sum_minute;
+    println!("  4b. {}", solution_4b);
+
+    assert_eq!(expected_4a, solution_4a);
+    assert_eq!(expected_4b, solution_4b);
+}
+
+fn alchemical_reduction(input: Vec<&str>) {
+    // let expected_5a = None;
+    // let expected_5b = None;
+
+    unimplemented!();
+
+    input.len();
+
+    // let solution_5a;
+    // let solution_5b;
+    //
+    // assert_eq!(expected_5a, solution_5a);
+    // assert_eq!(expected_5b, solution_5b);
 }
