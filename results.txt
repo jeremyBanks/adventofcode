@@ -1,0 +1,40 @@
+
+   🎄 🎄 🎄 🎄 🎄 🎄 🎄 🎄 
+  🎄 Advent of Code 2018 🎄
+   🎄 🎄 🎄 🎄 🎄 🎄 🎄 🎄 
+
+  ✨ Chronal Calibration
+
+  1a. 580
+  1b. 81972
+
+  µs. 20409
+
+  ✨ Inventory Management System
+
+  2a. 9139
+  2b. "uqcidadzwtnhsljvxyobmkfyr"
+
+  µs. 2700
+
+  ✨ No Matter How You Slice It
+
+  3a. 112378
+  3b. 603
+
+  µs. 2251
+
+  ✨ Repose Record
+
+  4a. 94542
+  4b. 50966
+
+  µs. 2162
+
+  ✨ Alchemical Reduction
+
+  5a. 11298
+  5b. 5148
+
+  µs. 15694
+
