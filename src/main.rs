@@ -6,7 +6,7 @@
 extern crate derive_more;
 
 use std::{
-    collections::{BTreeMap, BTreeSet, HashMap, HashSet},
+    collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque},
     env, fs,
     time::Instant,
 };
@@ -49,7 +49,7 @@ fn main() {
         }
     }
 
-    get_solution!{
+    get_solution! {
         Get solution number n as solution, called solution_name, from:
 
           (1) chronal_calibration
@@ -449,16 +449,63 @@ fn repose_record(input: Vec<&str>) {
 }
 
 fn alchemical_reduction(input: Vec<&str>) {
-    // let expected_5a = None;
-    // let expected_5b = None;
+    let expected_5a = 11298;
+    let expected_5b = 5148;
 
-    unimplemented!();
+    let input = input[0];
 
-    input.len();
+    fn flip_case(unit: char) -> char {
+        match unit {
+            'a'..='z' => unit.to_ascii_uppercase(),
+            'A'..='Z' => unit.to_ascii_lowercase(),
+            _ => panic!("unexpected character in input"),
+        }
+    }
 
-    // let solution_5a;
-    // let solution_5b;
-    //
-    // assert_eq!(expected_5a, solution_5a);
-    // assert_eq!(expected_5b, solution_5b);
+    fn post_reaction_size(units: impl Iterator<Item = char>) -> usize {
+        let mut reactor = VecDeque::new();
+        let mut hopper = units.collect::<VecDeque<_>>();
+
+        assert!(hopper.len() >= 2);
+
+        while hopper.len() > 0 {
+            let left = reactor.pop_back().or_else(|| hopper.pop_front()).unwrap();
+            let right = hopper.pop_front().unwrap();
+
+            if left == flip_case(right) {
+                // they annihilate each other and we drop them
+            } else {
+                // they survive in the reaction chamber
+                reactor.push_back(left);
+                reactor.push_back(right);
+            }
+        }
+
+        reactor.len()
+    }
+
+    let solution_5a = post_reaction_size(input.chars());
+
+    let solution_5b = {
+        let unit_types: HashSet<_> = input.chars().map(|c| c.to_ascii_lowercase()).collect();
+        let mut best_unit_size = std::usize::MAX;
+        for unit_lower in unit_types.iter() {
+            let unit_upper = unit_lower.to_ascii_uppercase();
+            let filtered_input = input
+                .chars()
+                .filter(|c| *c != unit_upper && *c != *unit_lower);
+            let size = post_reaction_size(filtered_input);
+            if size < best_unit_size {
+                best_unit_size = size;
+            }
+        }
+
+        best_unit_size
+    };
+
+    println!("  5a. {}", solution_5a);
+    println!("  5b. {}", solution_5b);
+
+    assert_eq!(expected_5a, solution_5a);
+    assert_eq!(expected_5b, solution_5b);
 }
