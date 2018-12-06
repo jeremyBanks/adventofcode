@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail;
-cargo +nightly fmt --verbose;
+cargo +nightly fmt;
 cargo +nightly clippy;
-cargo +nightly fix --verbose --allow-dirty --allow-staged;
+cargo +nightly fix --allow-dirty --allow-staged;
 rm -rf results.txt;
 clear;
 cargo +nightly build;
