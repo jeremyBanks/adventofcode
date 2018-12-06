@@ -3,6 +3,7 @@
     range_contains,
     associated_type_defaults,
     never_type,
+    try_from,
     const_fn
 )]
 #![allow(unused_imports)]
@@ -13,6 +14,7 @@ extern crate derive_more;
 use std::{
     cmp::{Ord, Ordering},
     collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque},
+    convert::TryFrom,
     env,
     fmt::{Debug, Display},
     fs,
@@ -905,12 +907,12 @@ impl Problem<uint, ()> for ChronalCoordinates {
 
         #[derive(Eq, PartialEq, Debug, Clone)]
         struct Filler {
-            width: uint,
+            distance: uint,
             origin: (uint, uint),
         }
         impl Ord for Filler {
             fn cmp(&self, other: &Self) -> Ordering {
-                self.width.cmp(&other.width).reverse()
+                self.distance.cmp(&other.distance).reverse()
             }
         }
         impl PartialOrd for Filler {
@@ -919,52 +921,107 @@ impl Problem<uint, ()> for ChronalCoordinates {
             }
         }
 
-        let mut space = [None; 512 * 512];
+        const SIZE: uint = 384;
+
+        #[derive(Debug, Clone, Copy)]
+        enum Space {
+            Unvisited,
+            Tied { distance: uint },
+            ClosestTo { danger: (uint, uint) },
+        }
+        let mut spaces = [Space::Unvisited; SIZE * SIZE];
 
         let mut filling = BinaryHeap::new();
 
         for danger in dangers {
             filling.push(Filler {
-                width: 0,
+                distance: 0,
                 origin: danger,
             });
         }
 
-        // You're not accounting for ties.
-        // You need an enum.
-
-        let mut empty: uint = 512 * 512;
+        let mut empty: uint = SIZE * SIZE;
         while !filling.is_empty() {
             let mut filler = filling.pop().unwrap();
             let mut alive = false;
-            println!("{:?}", filler);
             let (x0, y0) = filler.origin;
-            for dy in 0..=filler.width {
-                for dx in 0..=filler.width {
-                    if dx > x0 || dy > y0 {
+            let d = int::try_from(filler.distance).unwrap();
+            for dy in -d..=d {
+                for dx in -d..=d {
+                    let sx = int::try_from(x0).unwrap() + dx;
+                    let sy = int::try_from(y0).unwrap() + dy;
+                    if sx < 0 || sy < 0 {
                         continue;
                     }
-                    let x = x0 + dx;
-                    let y = y0 + dy;
-                    if x >= 512 || y >= 512 {
+                    let x = uint::try_from(sx).unwrap();
+                    let y = uint::try_from(sy).unwrap();
+                    if x >= SIZE || y >= SIZE {
                         continue;
                     }
-                    if space[x + y * 512] == None {
-                        alive = true;
-                        space[x + y * 512] = Some(filler.origin);
-                        empty -= 1;
+                    match spaces[x + y * SIZE] {
+                        Space::Unvisited => {
+                            spaces[x + y * SIZE] = Space::ClosestTo {
+                                danger: filler.origin,
+                            };
+                            alive = true;
+                            empty -= 1;
+                        }
+                        Space::ClosestTo { danger } => {
+                            if danger == filler.origin {
+                                // oops, double-accounting
+                                continue;
+                            }
+                            let old_distance = danger.manhattan((x, y));
+                            if old_distance == filler.distance {
+                                spaces[x + y * SIZE] = Space::Tied {
+                                    distance: filler.distance,
+                                };
+                                alive = true;
+                            } else if old_distance > filler.distance {
+                                spaces[x + y * SIZE] = Space::ClosestTo {
+                                    danger: filler.origin,
+                                };
+                                alive = true;
+                            }
+                        }
+                        Space::Tied { distance } => {
+                            if distance > filler.distance {
+                                spaces[x + y * SIZE] = Space::ClosestTo {
+                                    danger: filler.origin,
+                                };
+                                alive = true;
+                            }
+                        }
                     }
                 }
             }
 
-            assert_eq!(empty, 0);
-
             if alive {
-                filler.width += 1;
+                filler.distance += 1;
                 filling.push(filler);
             }
         }
 
+        // assert_eq!(empty, 0);
+
+        for y in 0..SIZE {
+            for x in 0..SIZE {
+                let c = match spaces[x + y * SIZE] {
+                    Space::Unvisited => "?".to_string(),
+                    Space::Tied { distance: _ } => " ".to_string(),
+                    Space::ClosestTo { danger } => {
+                        let distance = danger.manhattan((x, y));
+                        if distance <= 9 {
+                            format!("{}", distance)
+                        } else {
+                            "+".to_string()
+                        }
+                    }
+                };
+                print!("{}", c);
+            }
+            println!();
+        }
         // println!("{:?}", );
 
         // #[derive(Copy, Clone, Debug)]
