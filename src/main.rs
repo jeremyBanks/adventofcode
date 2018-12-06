@@ -5,24 +5,27 @@
     never_type,
     const_fn
 )]
-#![allow(unused_imports, non_camel_case_types)]
+#![allow(unused_imports)]
 
 #[macro_use]
 extern crate derive_more;
 
 use std::{
-    collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque},
+    cmp::{Ord, Ordering},
+    collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque},
     env,
     fmt::{Debug, Display},
     fs,
     time::{Duration, Instant},
 };
 
-use regex::Regex;
-
 use itertools::Itertools;
+use regex::Regex;
+use typed_arena::Arena;
 
+#[allow(non_camel_case_types)]
 type int = isize;
+#[allow(non_camel_case_types)]
 type uint = usize;
 #[allow(dead_code)]
 const INT_MAX: int = std::isize::MAX;
@@ -34,10 +37,7 @@ const UINT_MAX: uint = std::usize::MAX;
 const UINT_MIN: uint = std::usize::MIN;
 
 fn main() {
-    println!();
-    println!("   🎄 🎄 🎄 🎄 🎄 🎄 🎄 🎄 ");
-    println!("  🎄 Advent of Code 2018 🎄");
-    println!("   🎄 🎄 🎄 🎄 🎄 🎄 🎄 🎄 ");
+    println!("🎄 Advent of Code 2018");
     println!();
 
     let argv: Vec<String> = env::args().collect();
@@ -78,7 +78,7 @@ trait Problem<SolutionA: Debug + PartialEq = (), SolutionB: Debug + PartialEq = 
 
     fn run(&self) {
         let day = self.day();
-        println!("  ✨ {}", self.name());
+        println!("✨ {}", self.name());
         println!();
         let input_full =
             fs::read_to_string(format!("input/{}.txt", day)).expect("Failed to load input.");
@@ -86,40 +86,46 @@ trait Problem<SolutionA: Debug + PartialEq = (), SolutionB: Debug + PartialEq = 
 
         let (expected_a, expected_b) = self.known_solution();
 
-        let before = Instant::now();
-        let mut iterations: u128 = 0;
-        let mut total_duration;
-        let mut a;
-        let mut b;
-        loop {
-            let a_b = self.solve(&input_lines);
-            a = a_b.0;
-            b = a_b.1;
+        let (a, b) = self.solve(&input_lines);
 
-            iterations += 1;
-            total_duration = Instant::now() - before;
-
-            if total_duration > Duration::from_secs(2) || iterations >= 128 {
-                break;
-            }
-        }
-        let duration_micros = (total_duration.as_nanos() / iterations) / 1000;
-
-        fn report<T: Debug + PartialEq>(day: uint, part: char, expected: Option<T>, actual: T) {
+        fn report<T: Debug + PartialEq>(day: uint, part: char, expected: &Option<T>, actual: &T) {
             if let Some(expected) = expected {
-                if actual == expected {
-                    println!("  {}{}. {:?}", day, part, actual);
+                if *actual == *expected {
+                    println!("{}{}. {:?}", day, part, actual);
                 } else {
-                    println!("❌{}{}. {:?} (expected {:?})", day, part, actual, expected);
+                    println!(
+                        "{}{}. {:<8?}❌ (expected {:?})",
+                        day, part, actual, expected
+                    );
                 }
             } else {
-                println!("❓{}{}. {:?}", day, part, actual);
+                println!("{}{}. {:<8?}❓", day, part, actual);
             }
         }
 
-        report(day, 'a', expected_a, a);
-        report(day, 'b', expected_b, b);
-        println!("  {}µ. {}", day, duration_micros);
+        report(day, 'a', &expected_a, &a);
+        report(day, 'b', &expected_b, &b);
+
+        // Don't benchmark unless it produces the right answer.
+        if expected_a == Some(a) && expected_b == Some(b) {
+            let before = Instant::now();
+            let mut iterations: u128 = 0;
+            let mut total_duration;
+            loop {
+                self.solve(&input_lines);
+
+                iterations += 1;
+                total_duration = Instant::now() - before;
+
+                if total_duration > Duration::from_secs(2) || iterations >= 128 {
+                    break;
+                }
+            }
+            let duration_micros = (total_duration.as_nanos() / iterations) / 1000;
+
+            println!("{}µ. {}", day, duration_micros);
+        }
+
         println!();
     }
 }
@@ -869,9 +875,111 @@ impl Problem<uint, ()> for ChronalCoordinates {
         "Chronal Coordinates"
     }
     fn known_solution(&self) -> (Option<uint>, Option<()>) {
-        (None, None)
+        (Some(1), None)
     }
-    fn solve(&self, _input: &[&str]) -> (uint, ()) {
+    fn solve(&self, input: &[&str]) -> (uint, ()) {
+        trait Manhattan {
+            fn manhattan(self, other: Self) -> uint;
+        }
+        impl Manhattan for (uint, uint) {
+            fn manhattan(self, other: Self) -> uint {
+                (if self.0 > other.0 {
+                    self.0 - other.0
+                } else {
+                    other.0 - self.0
+                }) + (if self.1 > other.1 {
+                    self.1 - other.1
+                } else {
+                    other.1 - self.1
+                })
+            }
+        }
+
+        let pattern = Regex::new(r"^(\d+),\s(\d+)$").unwrap();
+
+        let mut dangers: Vec<(uint, uint)> = Vec::new();
+        for line in input {
+            let pieces = pattern.captures(line).unwrap();
+            dangers.push((pieces[1].parse().unwrap(), pieces[2].parse().unwrap()))
+        }
+
+        #[derive(Eq, PartialEq, Debug, Clone)]
+        struct Filler {
+            width: uint,
+            origin: (uint, uint),
+        }
+        impl Ord for Filler {
+            fn cmp(&self, other: &Self) -> Ordering {
+                self.width.cmp(&other.width).reverse()
+            }
+        }
+        impl PartialOrd for Filler {
+            fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+                Some(self.cmp(other))
+            }
+        }
+
+        let mut space = [None; 512 * 512];
+
+        let mut filling = BinaryHeap::new();
+
+        for danger in dangers {
+            filling.push(Filler {
+                width: 0,
+                origin: danger,
+            });
+        }
+
+        // You're not accounting for ties.
+        // You need an enum.
+
+        let mut empty: uint = 512 * 512;
+        while !filling.is_empty() {
+            let mut filler = filling.pop().unwrap();
+            let mut alive = false;
+            println!("{:?}", filler);
+            let (x0, y0) = filler.origin;
+            for dy in 0..=filler.width {
+                for dx in 0..=filler.width {
+                    if dx > x0 || dy > y0 {
+                        continue;
+                    }
+                    let x = x0 + dx;
+                    let y = y0 + dy;
+                    if x >= 512 || y >= 512 {
+                        continue;
+                    }
+                    if space[x + y * 512] == None {
+                        alive = true;
+                        space[x + y * 512] = Some(filler.origin);
+                        empty -= 1;
+                    }
+                }
+            }
+
+            assert_eq!(empty, 0);
+
+            if alive {
+                filler.width += 1;
+                filling.push(filler);
+            }
+        }
+
+        // println!("{:?}", );
+
+        // #[derive(Copy, Clone, Debug)]
+        // struct FrontierPoint {
+        //     coordinate: (uint, uint),
+        //     nearest_danger_distance: uint,
+        //     nearest_danger: (uint, uint),
+        // }
+
+        // let dangers = Arena::new();
+        // dangers.alloc(Danger { coordinate: (0, 0) });
+
+        // let _width = 1000;
+        // let _height = 1000;
+
         (0, ())
     }
 }
