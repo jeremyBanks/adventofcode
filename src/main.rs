@@ -15,7 +15,7 @@ use std::{
     env,
     fmt::{Debug, Display},
     fs,
-    time::Instant,
+    time::{Duration, Instant},
 };
 
 use regex::Regex;
@@ -34,11 +34,11 @@ const UINT_MAX: uint = std::usize::MAX;
 const UINT_MIN: uint = std::usize::MIN;
 
 fn main() {
-    println!("");
+    println!();
     println!("   🎄 🎄 🎄 🎄 🎄 🎄 🎄 🎄 ");
     println!("  🎄 Advent of Code 2018 🎄");
     println!("   🎄 🎄 🎄 🎄 🎄 🎄 🎄 🎄 ");
-    println!("");
+    println!();
 
     let argv: Vec<String> = env::args().collect();
     let n: Option<uint> = match argv.len() {
@@ -56,6 +56,7 @@ fn main() {
         Box::new(|| NoMatterHowYouSliceIt.run()),
         Box::new(|| ReposeRecord.run()),
         Box::new(|| AlchemicalReduction.run()),
+        Box::new(|| DaySixNameTBD.run()),
     ];
 
     if let Some(n) = n {
@@ -73,21 +74,36 @@ trait Problem<SolutionA: Debug + PartialEq = (), SolutionB: Debug + PartialEq = 
     fn known_solution(&self) -> (Option<SolutionA>, Option<SolutionB>) {
         (None, None)
     }
-    fn solve(&self, input: Vec<&str>) -> (SolutionA, SolutionB);
+    fn solve(&self, input: &[&str]) -> (SolutionA, SolutionB);
 
     fn run(&self) {
         let day = self.day();
         println!("  ✨ {}", self.name());
-        println!("");
+        println!();
         let input_full =
             fs::read_to_string(format!("input/{}.txt", day)).expect("Failed to load input.");
-        let input_lines = input_full.split("\n").filter(|s| s.len() > 0).collect();
+        let input_lines: Vec<_> = input_full.split('\n').filter(|s| !s.is_empty()).collect();
 
         let (expected_a, expected_b) = self.known_solution();
 
         let before = Instant::now();
-        let (a, b) = self.solve(input_lines);
-        let duration = Instant::now() - before;
+        let mut iterations: u128 = 0;
+        let mut total_duration;
+        let mut a;
+        let mut b;
+        loop {
+            let a_b = self.solve(&input_lines);
+            a = a_b.0;
+            b = a_b.1;
+
+            iterations += 1;
+            total_duration = Instant::now() - before;
+
+            if total_duration > Duration::from_secs(2) || iterations >= 128 {
+                break;
+            }
+        }
+        let duration_micros = (total_duration.as_nanos() / iterations) / 1000;
 
         fn report<T: Debug + PartialEq>(day: uint, part: char, expected: Option<T>, actual: T) {
             if let Some(expected) = expected {
@@ -103,9 +119,8 @@ trait Problem<SolutionA: Debug + PartialEq = (), SolutionB: Debug + PartialEq = 
 
         report(day, 'a', expected_a, a);
         report(day, 'b', expected_b, b);
-        println!("");
-        println!("  µs. {}", duration.as_micros());
-        println!("");
+        println!("  {}µ. {}", day, duration_micros);
+        println!();
     }
 }
 
@@ -120,7 +135,7 @@ impl Problem<int, int> for ChronalCalibration {
     fn known_solution(&self) -> (Option<int>, Option<int>) {
         (Some(580), Some(81972))
     }
-    fn solve(&self, input: Vec<&str>) -> (int, int) {
+    fn solve(&self, input: &[&str]) -> (int, int) {
         let numbers: Vec<int> = input
             .iter()
             .map(|s| s.parse().expect("non-integer in input"))
@@ -136,7 +151,7 @@ impl Problem<int, int> for ChronalCalibration {
                 first_repeated_sum = Some(sum);
                 break;
             } else {
-                seen.insert(sum.clone());
+                seen.insert(sum);
             }
         }
         let first_repeated_sum = first_repeated_sum.unwrap();
@@ -156,19 +171,19 @@ impl Problem<uint, String> for InventoryManagementSystem {
     fn known_solution(&self) -> (Option<uint>, Option<String>) {
         (Some(9139), Some("uqcidadzwtnhsljvxyobmkfyr".to_string()))
     }
-    fn solve(&self, input: Vec<&str>) -> (uint, String) {
+    fn solve(&self, input: &[&str]) -> (uint, String) {
         let mut twos = 0;
         let mut threes = 0;
 
         for line in input.iter() {
             let mut frequencies = HashMap::new();
+            use std::collections::hash_map::Entry::{Occupied, Vacant};
 
             for letter in line.chars() {
-                if frequencies.contains_key(&letter) {
-                    frequencies.insert(letter, frequencies.get(&letter).unwrap() + 1);
-                } else {
-                    frequencies.insert(letter, 1);
-                }
+                frequencies
+                    .entry(letter)
+                    .and_modify(|e| *e += 1)
+                    .or_insert(1);
             }
 
             if frequencies.values().any(|f| *f == 2) {
@@ -233,9 +248,9 @@ impl Problem<uint, uint> for NoMatterHowYouSliceIt {
         "No Matter How You Slice It"
     }
     fn known_solution(&self) -> (Option<uint>, Option<uint>) {
-        (Some(112378), Some(603))
+        (Some(112_378), Some(603))
     }
-    fn solve(&self, input: Vec<&str>) -> (uint, uint) {
+    fn solve(&self, input: &[&str]) -> (uint, uint) {
         #[derive(Clone, Debug)]
         struct Claim {
             id: uint,
@@ -306,7 +321,7 @@ impl Problem<uint, uint> for NoMatterHowYouSliceIt {
                 }
             }
             if all_good {
-                solution_3b = Some(claim.id.clone());
+                solution_3b = Some(claim.id);
             }
         }
         let solution_3b = solution_3b.unwrap();
@@ -326,7 +341,7 @@ impl Problem<uint, uint> for ReposeRecord {
     fn known_solution(&self) -> (Option<uint>, Option<uint>) {
         (Some(94542), Some(50966))
     }
-    fn solve(&self, input: Vec<&str>) -> (uint, uint) {
+    fn solve(&self, input: &[&str]) -> (uint, uint) {
         #[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq)]
         struct Event {
             year: uint,
@@ -380,7 +395,7 @@ impl Problem<uint, uint> for ReposeRecord {
                 day: day_str.parse().unwrap(),
                 hour: hour_str.parse().unwrap(),
                 minute: minute_str.parse().unwrap(),
-                event_type: event_type,
+                event_type,
             });
         }
 
@@ -503,7 +518,7 @@ impl Problem<uint, uint> for AlchemicalReduction {
     fn known_solution(&self) -> (Option<uint>, Option<uint>) {
         (Some(11298), Some(5148))
     }
-    fn solve(&self, input: Vec<&str>) -> (uint, uint) {
+    fn solve(&self, input: &[&str]) -> (uint, uint) {
         let input = input[0];
 
         fn flip_case(unit: char) -> char {
@@ -520,7 +535,7 @@ impl Problem<uint, uint> for AlchemicalReduction {
 
             assert!(hopper.len() >= 2);
 
-            while hopper.len() > 0 {
+            while !hopper.is_empty() {
                 let left = reactor.pop_back().or_else(|| hopper.pop_front()).unwrap();
                 let right = hopper.pop_front().unwrap();
 
@@ -556,5 +571,21 @@ impl Problem<uint, uint> for AlchemicalReduction {
         };
 
         (solution_5a, solution_5b)
+    }
+}
+
+struct DaySixNameTBD;
+impl Problem<(), ()> for DaySixNameTBD {
+    fn day(&self) -> uint {
+        6
+    }
+    fn name(&self) -> &'static str {
+        "Unreleased"
+    }
+    fn known_solution(&self) -> (Option<()>, Option<()>) {
+        (None, None)
+    }
+    fn solve(&self, _input: &[&str]) -> ((), ()) {
+        ((), ())
     }
 }
