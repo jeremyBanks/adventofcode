@@ -6,7 +6,6 @@
     try_from,
     const_fn
 )]
-#![allow(unused_imports)]
 
 #[macro_use]
 extern crate derive_more;
@@ -16,41 +15,13 @@ use std::{
     collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque},
     convert::TryFrom,
     env,
-    fmt::{Debug, Display},
-    fs,
-    time::{Duration, Instant},
 };
 
-use itertools::Itertools;
 use regex::Regex;
-use typed_arena::Arena;
-
-#[allow(non_camel_case_types)]
-type int = isize;
-#[allow(non_camel_case_types)]
-type uint = usize;
-#[allow(dead_code)]
-const INT_MAX: int = std::isize::MAX;
-#[allow(dead_code)]
-const INT_MIN: int = std::isize::MIN;
-#[allow(dead_code)]
-const UINT_MAX: uint = std::usize::MAX;
-#[allow(dead_code)]
-const UINT_MIN: uint = std::usize::MIN;
 
 fn main() {
     println!("🎄Advent of Code 2018");
     println!();
-
-    let argv: Vec<String> = env::args().collect();
-    let n: Option<uint> = match argv.len() {
-        1 => None,
-        2 => Some(argv[1].parse().unwrap()),
-        _ => {
-            println!("usage: {} [PROBLEM_NUMBER]", argv[0]);
-            return;
-        }
-    };
 
     let solutions: Vec<Box<dyn Fn() -> ()>> = vec![
         Box::new(|| ChronalCalibration.run()),
@@ -63,6 +34,17 @@ fn main() {
         Box::new(|| UnimplementedDay::new(8, "Memory Manuver").run()),
     ];
 
+    let argv: Vec<String> = env::args().collect();
+
+    let n: Option<uint> = match argv.len() {
+        1 => None,
+        2 => Some(argv[1].parse().unwrap()),
+        _ => {
+            println!("usage: {} [PROBLEM_NUMBER]", argv[0]);
+            return;
+        }
+    };
+
     if let Some(n) = n {
         solutions[n - 1]()
     } else {
@@ -72,73 +54,140 @@ fn main() {
     }
 }
 
-#[derive(Debug, PartialEq)]
-struct Unknown;
+mod common {
+    use std::{
+        fmt::Debug,
+        fs,
+        time::{Duration, Instant},
+    };
 
-trait Problem<SolutionA: Debug + PartialEq = Unknown, SolutionB: Debug + PartialEq = Unknown> {
-    fn day(&self) -> uint;
-    fn name(&self) -> &'static str;
-    fn known_solution(&self) -> (Option<SolutionA>, Option<SolutionB>) {
-        (None, None)
-    }
-    fn solve(&self, input: &[&str]) -> (SolutionA, SolutionB);
+    #[allow(non_camel_case_types)]
+    pub type int = isize;
+    #[allow(non_camel_case_types)]
+    pub type uint = usize;
+    #[allow(dead_code)]
+    pub const INT_MAX: int = std::isize::MAX;
+    #[allow(dead_code)]
+    pub const INT_MIN: int = std::isize::MIN;
+    #[allow(dead_code)]
+    pub const UINT_MAX: uint = std::usize::MAX;
+    #[allow(dead_code)]
+    pub const UINT_MIN: uint = std::usize::MIN;
 
-    fn run(&self) {
-        let day = self.day();
-        println!("✨ {}", self.name());
-        println!();
-        let input_full =
-            fs::read_to_string(format!("input/{}.txt", day)).expect("Failed to load input.");
-        let input_lines: Vec<_> = input_full.split('\n').filter(|s| !s.is_empty()).collect();
+    #[derive(Debug, PartialEq)]
+    pub struct Unknown;
 
-        let (expected_a, expected_b) = self.known_solution();
+    pub trait Problem<
+        SolutionA: Debug + PartialEq = Unknown,
+        SolutionB: Debug + PartialEq = Unknown,
+    >
+    {
+        fn day(&self) -> uint;
+        fn name(&self) -> &'static str;
+        fn known_solution(&self) -> (Option<SolutionA>, Option<SolutionB>) {
+            (None, None)
+        }
+        fn solve(&self, input: &[&str]) -> (SolutionA, SolutionB);
 
-        let (a, b) = self.solve(&input_lines);
+        fn run(&self) {
+            let day = self.day();
+            println!("✨ {}", self.name());
+            println!();
+            let input_full =
+                fs::read_to_string(format!("input/{}.txt", day)).expect("Failed to load input.");
+            let input_lines: Vec<_> = input_full.split('\n').filter(|s| !s.is_empty()).collect();
 
-        fn report<T: Debug + PartialEq>(day: uint, part: char, expected: &Option<T>, actual: &T) {
-            if let Some(expected) = expected {
-                if *actual == *expected {
-                    println!("{}{}. {:}", day, part, format!("{:?}", actual));
+            let (expected_a, expected_b) = self.known_solution();
+
+            let (a, b) = self.solve(&input_lines);
+
+            fn report<T: Debug + PartialEq>(
+                day: uint,
+                part: char,
+                expected: &Option<T>,
+                actual: &T,
+            ) {
+                if let Some(expected) = expected {
+                    if *actual == *expected {
+                        println!("{}{}. {:}", day, part, format!("{:?}", actual));
+                    } else {
+                        println!(
+                            "{}{}. {:<8}❌ (expected {})",
+                            day,
+                            part,
+                            format!("{:?}", actual),
+                            format!("{:?}", expected)
+                        );
+                    }
                 } else {
-                    println!(
-                        "{}{}. {:<8}❌ (expected {})",
-                        day,
-                        part,
-                        format!("{:?}", actual),
-                        format!("{:?}", expected)
-                    );
-                }
-            } else {
-                println!("{}{}. {:<8}❓", day, part, format!("{:?}", actual));
-            }
-        }
-
-        report(day, 'a', &expected_a, &a);
-        report(day, 'b', &expected_b, &b);
-
-        // Don't benchmark unless it produces the right answer.
-        if expected_a == Some(a) && expected_b == Some(b) {
-            let before = Instant::now();
-            let mut iterations: u128 = 0;
-            let mut total_duration;
-            loop {
-                self.solve(&input_lines);
-
-                iterations += 1;
-                total_duration = Instant::now() - before;
-
-                if total_duration > Duration::from_secs(2) || iterations >= 128 {
-                    break;
+                    println!("{}{}. {:<8}❓", day, part, format!("{:?}", actual));
                 }
             }
-            let duration_micros = (total_duration.as_nanos() / iterations) / 1000;
 
-            println!("{}µ. {}", day, duration_micros);
+            report(day, 'a', &expected_a, &a);
+            report(day, 'b', &expected_b, &b);
+
+            // Don't benchmark unless it produces the right answer.
+            if expected_a == Some(a) && expected_b == Some(b) {
+                let before = Instant::now();
+                let mut iterations: u128 = 0;
+                let mut total_duration;
+                loop {
+                    self.solve(&input_lines);
+
+                    iterations += 1;
+                    total_duration = Instant::now() - before;
+
+                    if total_duration > Duration::from_secs(2) || iterations >= 128 {
+                        break;
+                    }
+                }
+                let duration_micros = (total_duration.as_nanos() / iterations) / 1000;
+
+                println!("{}µ. {}", day, duration_micros);
+            }
+
+            println!();
         }
+    }
 
-        println!();
+    pub struct UnimplementedDay {
+        day: uint,
+        name: &'static str,
+    }
+
+    impl UnimplementedDay {
+        pub fn new(day: uint, name: &'static str) -> Self {
+            Self { day, name }
+        }
+    }
+
+    impl Problem for UnimplementedDay {
+        fn day(&self) -> uint {
+            self.day
+        }
+        fn name(&self) -> &'static str {
+            self.name
+        }
+        fn known_solution(&self) -> (Option<Unknown>, Option<Unknown>) {
+            (None, None)
+        }
+        fn solve(&self, _input: &[&str]) -> (Unknown, Unknown) {
+            (Unknown, Unknown)
+        }
+    }
+
+    #[allow(clippy::trivially_copy_pass_by_ref)]
+    pub fn is_digit(c: &char) -> bool {
+        ('0'..='9').contains(c)
+    }
+
+    #[allow(clippy::trivially_copy_pass_by_ref)]
+    pub fn is_not_digit(c: &char) -> bool {
+        !('0'..='9').contains(c)
     }
 }
+use self::common::*;
 
 struct ChronalCalibration;
 impl Problem<int, int> for ChronalCalibration {
@@ -193,7 +242,6 @@ impl Problem<uint, String> for InventoryManagementSystem {
 
         for line in input.iter() {
             let mut frequencies = HashMap::new();
-            use std::collections::hash_map::Entry::{Occupied, Vacant};
 
             for letter in line.chars() {
                 frequencies
@@ -245,14 +293,6 @@ impl Problem<uint, String> for InventoryManagementSystem {
 
         (solution_2a, solution_2b)
     }
-}
-
-fn is_digit(c: &char) -> bool {
-    ('0'..='9').contains(c)
-}
-
-fn is_not_digit(c: &char) -> bool {
-    !('0'..='9').contains(c)
 }
 
 struct NoMatterHowYouSliceIt;
@@ -599,7 +639,7 @@ impl Problem<uint, Unknown> for ChronalCoordinates {
         "Chronal Coordinates"
     }
     fn known_solution(&self) -> (Option<uint>, Option<Unknown>) {
-        (None, None)
+        (Some(4290), None)
     }
     fn solve(&self, input: &[&str]) -> (uint, Unknown) {
         trait Manhattan {
@@ -643,7 +683,22 @@ impl Problem<uint, Unknown> for ChronalCoordinates {
             }
         }
 
-        const SIZE: uint = 384;
+        let mut width = 0;
+        let mut height = 0;
+
+        let mut filling = BinaryHeap::new();
+        for danger in dangers {
+            if danger.0 > width {
+                width = danger.0;
+            }
+            if danger.1 > height {
+                height = danger.1;
+            }
+            filling.push(Filler {
+                distance: 0,
+                origin: danger,
+            });
+        }
 
         #[derive(Debug, Clone, Copy)]
         enum Space {
@@ -651,18 +706,9 @@ impl Problem<uint, Unknown> for ChronalCoordinates {
             Tied { distance: uint },
             ClosestTo { danger: (uint, uint) },
         }
-        let mut spaces = [Space::Unvisited; SIZE * SIZE];
+        let mut spaces = vec![Space::Unvisited; width * height];
 
-        let mut filling = BinaryHeap::new();
-
-        for danger in dangers {
-            filling.push(Filler {
-                distance: 0,
-                origin: danger,
-            });
-        }
-
-        let mut empty: uint = SIZE * SIZE;
+        let mut area_by_origin = HashMap::<(uint, uint), uint>::new();
         while !filling.is_empty() {
             let mut filler = filling.pop().unwrap();
             let mut alive = false;
@@ -670,6 +716,9 @@ impl Problem<uint, Unknown> for ChronalCoordinates {
             let d = int::try_from(filler.distance).unwrap();
             for dy in -d..=d {
                 for dx in -d..=d {
+                    if !(dy == -d || dy == d || dx == -d || dx == d) {
+                        continue;
+                    }
                     let sx = int::try_from(x0).unwrap() + dx;
                     let sy = int::try_from(y0).unwrap() + dy;
                     if sx < 0 || sy < 0 {
@@ -677,40 +726,54 @@ impl Problem<uint, Unknown> for ChronalCoordinates {
                     }
                     let x = uint::try_from(sx).unwrap();
                     let y = uint::try_from(sy).unwrap();
-                    if x >= SIZE || y >= SIZE {
+                    if x >= width || y >= height {
                         continue;
                     }
-                    match spaces[x + y * SIZE] {
+                    let new_distance = filler.origin.manhattan((x, y));
+                    match spaces[x + y * width] {
                         Space::Unvisited => {
-                            spaces[x + y * SIZE] = Space::ClosestTo {
+                            spaces[x + y * width] = Space::ClosestTo {
                                 danger: filler.origin,
                             };
                             alive = true;
-                            empty -= 1;
+                            area_by_origin
+                                .entry(filler.origin)
+                                .and_modify(|n| *n += 1)
+                                .or_insert(1);
                         }
                         Space::ClosestTo { danger } => {
                             if danger == filler.origin {
-                                // oops, double-accounting
+                                // oops
                                 continue;
                             }
                             let old_distance = danger.manhattan((x, y));
-                            if old_distance == filler.distance {
-                                spaces[x + y * SIZE] = Space::Tied {
-                                    distance: filler.distance,
+                            if old_distance == new_distance {
+                                spaces[x + y * width] = Space::Tied {
+                                    distance: old_distance,
                                 };
                                 alive = true;
-                            } else if old_distance > filler.distance {
-                                spaces[x + y * SIZE] = Space::ClosestTo {
+                                area_by_origin.insert(danger, area_by_origin[&danger] - 1);
+                            } else if old_distance > new_distance {
+                                area_by_origin.insert(danger, area_by_origin[&danger] - 1);
+                                area_by_origin
+                                    .entry(filler.origin)
+                                    .and_modify(|n| *n += 1)
+                                    .or_insert(1);
+                                spaces[x + y * width] = Space::ClosestTo {
                                     danger: filler.origin,
                                 };
                                 alive = true;
                             }
                         }
                         Space::Tied { distance } => {
-                            if distance > filler.distance {
-                                spaces[x + y * SIZE] = Space::ClosestTo {
+                            if distance > new_distance {
+                                spaces[x + y * width] = Space::ClosestTo {
                                     danger: filler.origin,
                                 };
+                                area_by_origin
+                                    .entry(filler.origin)
+                                    .and_modify(|n| *n += 1)
+                                    .or_insert(1);
                                 alive = true;
                             }
                         }
@@ -724,67 +787,32 @@ impl Problem<uint, Unknown> for ChronalCoordinates {
             }
         }
 
-        // assert_eq!(empty, 0);
+        // if they extend to the edge they extend infinitely.
+        let mut infinite_origins = HashSet::new();
+        for x in 0..width {
+            if let Space::ClosestTo { danger } = spaces[x] {
+                infinite_origins.insert(danger);
+            }
+            if let Space::ClosestTo { danger } = spaces[x + (height - 2) * width] {
+                infinite_origins.insert(danger);
+            }
+        }
+        for y in 0..height {
+            if let Space::ClosestTo { danger } = spaces[y * width] {
+                infinite_origins.insert(danger);
+            }
+            if let Space::ClosestTo { danger } = spaces[(width - 1) + y * width] {
+                infinite_origins.insert(danger);
+            }
+        }
 
-        // for y in 0..SIZE {
-        //     for x in 0..SIZE {
-        //         let c = match spaces[x + y * SIZE] {
-        //             Space::Unvisited => "?".to_string(),
-        //             Space::Tied { distance: _ } => " ".to_string(),
-        //             Space::ClosestTo { danger } => {
-        //                 let distance = danger.manhattan((x, y));
-        //                 if distance <= 9 {
-        //                     format!("{}", distance)
-        //                 } else {
-        //                     "+".to_string()
-        //                 }
-        //             }
-        //         };
-        //         print!("{}", c);
-        //     }
-        //     println!();
-        // }
-        // println!("{:?}", );
+        let largest_area = *area_by_origin
+            .iter()
+            .filter(|(k, _v)| !infinite_origins.contains(k))
+            .map(|(_k, v)| v)
+            .max()
+            .unwrap();
 
-        // #[derive(Copy, Clone, Debug)]
-        // struct FrontierPoint {
-        //     coordinate: (uint, uint),
-        //     nearest_danger_distance: uint,
-        //     nearest_danger: (uint, uint),
-        // }
-
-        // let dangers = Arena::new();
-        // dangers.alloc(Danger { coordinate: (0, 0) });
-
-        // let _width = 1000;
-        // let _height = 1000;
-
-        (0, Unknown)
-    }
-}
-
-struct UnimplementedDay {
-    day: uint,
-    name: &'static str,
-}
-
-impl UnimplementedDay {
-    pub fn new(day: uint, name: &'static str) -> Self {
-        Self { day, name }
-    }
-}
-
-impl Problem for UnimplementedDay {
-    fn day(&self) -> uint {
-        self.day
-    }
-    fn name(&self) -> &'static str {
-        self.name
-    }
-    fn known_solution(&self) -> (Option<Unknown>, Option<Unknown>) {
-        (None, None)
-    }
-    fn solve(&self, _input: &[&str]) -> (Unknown, Unknown) {
-        (Unknown, Unknown)
+        (largest_area, Unknown)
     }
 }
