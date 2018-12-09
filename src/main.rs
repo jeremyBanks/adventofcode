@@ -32,6 +32,7 @@ fn main() {
         Box::new(|| ChronalCoordinates.run()),
         Box::new(|| UnimplementedDay::new(7, "The Sum of Its Parts").run()),
         Box::new(|| UnimplementedDay::new(8, "Memory Manuver").run()),
+        Box::new(|| UnimplementedDay::new(9, "Marble Mania").run()),
     ];
 
     let argv: Vec<String> = env::args().collect();
