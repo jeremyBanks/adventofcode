@@ -1,7 +1,57 @@
 🎄Advent of Code 2018
 
+✨ Chronal Calibration
+
+1a. 580
+1b. 81972
+1µ. 22103
+
+✨ Inventory Management System
+
+2a. 9139
+2b. "uqcidadzwtnhsljvxyobmkfyr"
+2µ. 1494
+
+✨ No Matter How You Slice It
+
+3a. 112378
+3b. 603
+3µ. 1607
+
+✨ Repose Record
+
+4a. 94542
+4b. 50966
+4µ. 1111
+
+✨ Alchemical Reduction
+
+5a. 11298
+5b. 5148
+5µ. 14122
+
 ✨ Chronal Coordinates
 
 6a. 4290
 6b. Unknown ❓
+
+✨ The Sum of Its Parts
+
+7a. Unknown ❓
+7b. Unknown ❓
+
+✨ Memory Manuver
+
+8a. Unknown ❓
+8b. Unknown ❓
+
+✨ Marble Mania
+
+9a. Unknown ❓
+9b. Unknown ❓
+
+✨ The Stars Align
+
+10a. Unknown ❓
+10b. Unknown ❓
 
