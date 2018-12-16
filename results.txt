@@ -2,56 +2,81 @@
 
 ✨ Chronal Calibration
 
-1a. 580
-1b. 81972
-1µ. 28228
+  1a. 580
+  1b. 81972
+  1µ. 28739
 
 ✨ Inventory Management System
 
-2a. 9139
-2b. "uqcidadzwtnhsljvxyobmkfyr"
-2µ. 1783
+  2a. 9139
+  2b. "uqcidadzwtnhsljvxyobmkfyr"
+  2µ. 1844
 
 ✨ No Matter How You Slice It
 
-3a. 112378
-3b. 603
-3µ. 2211
+  3a. 112378
+  3b. 603
+  3µ. 3180
 
 ✨ Repose Record
 
-4a. 94542
-4b. 50966
-4µ. 1252
+  4a. 94542
+  4b. 50966
+  4µ. 1946
 
 ✨ Alchemical Reduction
 
-5a. 11298
-5b. 5148
-5µ. 14745
+  5a. 11298
+  5b. 5148
+  5µ. 17015
 
 ✨ Chronal Coordinates
 
-6a. 4290
-6b. Unknown ❓
+  6a. 4290
+  6b. Unknown ❓
 
 ✨ The Sum of Its Parts
 
-7a. Unknown ❓
-7b. Unknown ❓
+  7a. Unknown ❓
+  7b. Unknown ❓
 
 ✨ Memory Manuver
 
-8a. Unknown ❓
-8b. Unknown ❓
+  8a. Unknown ❓
+  8b. Unknown ❓
 
 ✨ Marble Mania
 
-9a. Unknown ❓
-9b. Unknown ❓
+  9a. Unknown ❓
+  9b. Unknown ❓
 
 ✨ The Stars Align
 
-10a. Unknown ❓
-10b. Unknown ❓
+ 10a. Unknown ❓
+ 10b. Unknown ❓
+
+✨ Chronal Charge
+
+ 11a. Unknown ❓
+ 11b. Unknown ❓
+
+✨ Subterranean Sustainability
+
+ 12a. Unknown ❓
+ 12b. Unknown ❓
+
+✨ Mine Cart Madness
+
+ 13a. Unknown ❓
+ 13b. Unknown ❓
+
+✨ Chocolate Charts
+
+ 14a. Unknown ❓
+ 14b. Unknown ❓
+
+✨ Beverage Bandits
+
+ 15a. Unknown ❓
+ 15b. Unknown ❓
 

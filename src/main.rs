@@ -10,6 +10,10 @@
 #[macro_use]
 extern crate derive_more;
 
+#[macro_use]
+extern crate proptest;
+use proptest::prelude::*;
+
 use std::{
     cmp::{Ord, Ordering},
     collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque},
@@ -35,6 +39,10 @@ fn main() {
         Box::new(|| UnimplementedDay::new(9, "Marble Mania").run()),
         Box::new(|| UnimplementedDay::new(10, "The Stars Align").run()),
         Box::new(|| UnimplementedDay::new(11, "Chronal Charge").run()),
+        Box::new(|| UnimplementedDay::new(12, "Subterranean Sustainability").run()),
+        Box::new(|| UnimplementedDay::new(13, "Mine Cart Madness").run()),
+        Box::new(|| UnimplementedDay::new(14, "Chocolate Charts").run()),
+        Box::new(|| UnimplementedDay::new(15, "Beverage Bandits").run()),
     ];
 
     let argv: Vec<String> = env::args().collect();
@@ -112,10 +120,10 @@ mod common {
             ) {
                 if let Some(expected) = expected {
                     if *actual == *expected {
-                        println!("{}{}. {:}", day, part, format!("{:?}", actual));
+                        println!("{:>3}{}. {:}", day, part, format!("{:?}", actual));
                     } else {
                         println!(
-                            "{}{}. {:<8}❌ (expected {})",
+                            "{:>3}{}. {:<8}❌ (expected {})",
                             day,
                             part,
                             format!("{:?}", actual),
@@ -123,7 +131,7 @@ mod common {
                         );
                     }
                 } else {
-                    println!("{}{}. {:<8}❓", day, part, format!("{:?}", actual));
+                    println!("{:>3}{}. {:<8}❓", day, part, format!("{:?}", actual));
                 }
             }
 
@@ -147,7 +155,7 @@ mod common {
                 }
                 let duration_micros = (total_duration.as_nanos() / iterations) / 1000;
 
-                println!("{}µ. {}", day, duration_micros);
+                println!("{:>3}µ. {}", day, duration_micros);
             }
 
             println!();
