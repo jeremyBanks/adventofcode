@@ -12,7 +12,11 @@ pub trait Solution {
     const DAY: u32;
 
     fn run() -> (Self::PartOne, Self::PartTwo) {
-        let input_path = format!("./inputs/year{:04}-day{:02}.txt", Self::YEAR, Self::DAY);
+        let input_path = format!(
+            "./src/solutions/year{:04}/day{:02}-input.txt",
+            Self::YEAR,
+            Self::DAY
+        );
 
         let input = std::fs::read_to_string(&input_path).unwrap_or_else(|_| {
             let session_key = std::env::var("CURL_AOC_SESSION").unwrap();
