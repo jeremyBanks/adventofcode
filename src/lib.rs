@@ -4,6 +4,7 @@ mod solutions;
 
 pub fn main() -> () {
     dbg!(solutions::year2015::day01::Solution::run());
+    dbg!(solutions::year2015::day02::Solution::run());
 }
 
 pub trait Solution {
