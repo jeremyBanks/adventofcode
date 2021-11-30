@@ -20,6 +20,7 @@ impl crate::Solution for Solution {
                 instructions_to_basement = Some(i + 1);
             }
         }
+
         (floor, instructions_to_basement.unwrap())
     }
 }

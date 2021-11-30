@@ -5,7 +5,5 @@ impl crate::Solution for Solution {
     const YEAR: u32 = 2015;
     const DAY: u32 = 3;
 
-    fn part_one(_input: &str) {
-
-    }
+    fn part_one(_input: &str) {}
 }

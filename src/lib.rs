@@ -23,7 +23,8 @@ pub trait Solution {
                 Self::YEAR,
                 Self::DAY
             );
-            let mut input = reqwest::blocking::Client::new().get(input_url)
+            let mut input = reqwest::blocking::Client::new()
+                .get(input_url)
                 .header(reqwest::header::COOKIE, format!("session={}", session_key))
                 .send()
                 .unwrap()
@@ -42,7 +43,9 @@ pub trait Solution {
         let input = input.trim();
         let solution = Self::solve(input);
 
-        println!("{:4} Day {:<2} = {:?}", Self::YEAR, Self::DAY, solution);
+        if &solution != &Default::default() {
+            println!("{:4} Day {:<2} = {:?}", Self::YEAR, Self::DAY, solution);
+        }
 
         solution
     }
