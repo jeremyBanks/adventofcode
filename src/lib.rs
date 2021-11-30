@@ -3,14 +3,14 @@
 mod solutions;
 
 pub fn main() -> () {
-    dbg!(solutions::year2015::day01::Solution::solve());
+    dbg!(solutions::year2015::day01::Solution::run());
 }
 
 pub trait Solution {
     const YEAR: u32;
     const DAY: u32;
 
-    fn solve() -> (Self::PartOne, Self::PartTwo) {
+    fn run() -> (Self::PartOne, Self::PartTwo) {
         let input_path = format!("./inputs/year{:04}-day{:02}.txt", Self::YEAR, Self::DAY);
 
         let input = std::fs::read_to_string(&input_path).unwrap_or_else(|_| {
@@ -35,7 +35,10 @@ pub trait Solution {
             input
         });
         let input = input.trim();
+        Self::solve(input)
+    }
 
+    fn solve(input: &str) -> (Self::PartOne, Self::PartTwo) {
         (Self::part_one(input), Self::part_two(input))
     }
 
