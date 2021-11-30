@@ -21,7 +21,7 @@ prost = "0.9.0"
 rand = "0.8.4"
 regex = "1.5.4"
 remain = "0.2.2"
-reqwest = { version = "0.11.6", features = ["json"] }
+reqwest = { version = "0.11.6", features = ["json", "blocking"] }
 rusqlite = { version = "0.26.1", features = ["bundled-full", "session", "buildtime_bindgen"] }
 serde = { version = "1.0.126", features = ["derive"] }
 serde-transcode = "1.1.1"

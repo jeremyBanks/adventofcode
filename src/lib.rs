@@ -2,14 +2,39 @@
 
 mod solutions;
 
-pub async fn main() -> () {}
+pub fn main() -> () {
+    dbg!(solutions::year2015::day01::Solution::solve());
+}
 
-pub trait Solution: Default {
+pub trait Solution {
     const YEAR: u32;
     const DAY: u32;
 
-    fn solve(input: &str) -> (Self::PartOne, Self::PartTwo) {
-        (Self::part_one(input), Self::part_two(input))
+    fn solve() -> (Self::PartOne, Self::PartTwo) {
+        let session_key = std::env::var("CURL_AOC_SESSION").unwrap();
+        let input_url = format!(
+            "https://adventofcode.com/{}/day/{}/input",
+            Self::YEAR,
+            Self::DAY
+        );
+        let input_path = format!("./inputs/year{:04}-day{:02}.txt", Self::YEAR, Self::DAY);
+
+        let input = std::fs::read_to_string(&input_path).unwrap_or_else(|_| {
+            let input = reqwest::blocking::Client::new().get(input_url)
+                .header(reqwest::header::COOKIE, format!("session={}", session_key))
+                .send()
+                .unwrap()
+                .error_for_status()
+                .unwrap()
+                .text()
+                .unwrap();
+
+            std::fs::write(&input_path, &input).unwrap();
+
+            input
+        });
+
+        (Self::part_one(&input), Self::part_two(&input))
     }
 
     type PartOne: Default = ();
