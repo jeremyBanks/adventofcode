@@ -3,10 +3,10 @@
 mod solutions;
 
 pub fn main() -> () {
-    dbg!(solutions::year2015::day01::Solution::run());
-    dbg!(solutions::year2015::day02::Solution::run());
-    dbg!(solutions::year2015::day03::Solution::run());
-    dbg!(solutions::year2015::day04::Solution::run());
+    solutions::year2015::day01::Solution::run();
+    solutions::year2015::day02::Solution::run();
+    solutions::year2015::day03::Solution::run();
+    solutions::year2015::day04::Solution::run();
 }
 
 pub trait Solution {
@@ -40,20 +40,24 @@ pub trait Solution {
             input
         });
         let input = input.trim();
-        Self::solve(input)
+        let solution = Self::solve(input);
+
+        println!("{:4} Day {:<2} = {:?}", Self::YEAR, Self::DAY, solution);
+
+        solution
     }
 
     fn solve(input: &str) -> (Self::PartOne, Self::PartTwo) {
         (Self::part_one(input), Self::part_two(input))
     }
 
-    type PartOne: Default = ();
+    type PartOne: Default + std::fmt::Debug + PartialEq = ();
     fn part_one(input: &str) -> Self::PartOne {
         drop(input);
         Default::default()
     }
 
-    type PartTwo: Default = ();
+    type PartTwo: Default + std::fmt::Debug + PartialEq = ();
     fn part_two(input: &str) -> Self::PartTwo {
         drop(input);
         Default::default()
