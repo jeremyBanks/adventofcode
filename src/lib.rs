@@ -5,6 +5,8 @@ mod solutions;
 pub fn main() -> () {
     dbg!(solutions::year2015::day01::Solution::run());
     dbg!(solutions::year2015::day02::Solution::run());
+    dbg!(solutions::year2015::day03::Solution::run());
+    dbg!(solutions::year2015::day04::Solution::run());
 }
 
 pub trait Solution {
@@ -28,7 +30,9 @@ pub trait Solution {
                 .error_for_status()
                 .unwrap()
                 .text()
-                .unwrap();
+                .unwrap()
+                .trim()
+                .to_string();
             input.push('\n');
 
             std::fs::write(&input_path, &input).unwrap();
