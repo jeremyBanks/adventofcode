@@ -1,3 +1,7 @@
 use crate::Solution;
 
-pub fn run_all() {}
+mod day01;
+
+pub fn run_all() {
+    day01::Solution::run();
+}
