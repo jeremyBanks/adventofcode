@@ -1,12 +1,10 @@
 #![feature(associated_type_defaults)]
+#![allow(unused_imports)]
 
 mod solutions;
 
 pub fn main() -> () {
-    solutions::year2015::day01::Solution::run();
-    solutions::year2015::day02::Solution::run();
-    solutions::year2015::day03::Solution::run();
-    solutions::year2015::day04::Solution::run();
+    solutions::run_all();
 }
 
 pub trait Solution {
