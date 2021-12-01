@@ -5,6 +5,7 @@ use std::time::{Duration, Instant};
 
 use thousands::Separable;
 
+mod prelude;
 mod solutions;
 
 pub fn main() -> () {
