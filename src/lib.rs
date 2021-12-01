@@ -1,5 +1,9 @@
-#![feature(associated_type_defaults)]
+#![feature(associated_type_defaults, duration_constants)]
 #![allow(unused_imports)]
+
+use std::time::{Duration, Instant};
+
+use thousands::Separable;
 
 mod solutions;
 
@@ -19,7 +23,7 @@ pub trait Solution {
         );
 
         let input = std::fs::read_to_string(&input_path).unwrap_or_else(|_| {
-            let session_key = std::env::var("CURL_AOC_SESSION").unwrap();
+            let session_key = std::env::var("AOC_SESSION").unwrap();
             let input_url = format!(
                 "https://adventofcode.com/{}/day/{}/input",
                 Self::YEAR,
@@ -39,14 +43,22 @@ pub trait Solution {
             input.push('\n');
 
             std::fs::write(&input_path, &input).unwrap();
+            println!("{:4} Day {:>2}   input downloaded", Self::YEAR, Self::DAY);
 
             input
         });
         let input = input.trim();
+        let start = Instant::now();
         let solution = Self::solve(input);
+        let duration = start.elapsed();
 
         if &solution != &Default::default() {
-            println!("{:4} Day {:<2} = {:?}", Self::YEAR, Self::DAY, solution);
+            println!("{:4} Day {:>2} = {:?}", Self::YEAR, Self::DAY, solution);
+            println!(
+                "         Δt = {:>14}ns = {:?}",
+                duration.as_nanos().separate_with_commas(),
+                duration
+            );
         }
 
         solution

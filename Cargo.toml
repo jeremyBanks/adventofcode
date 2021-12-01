@@ -31,6 +31,7 @@ serde_rusqlite = "0.28.0"
 serde_urlencoded = "0.7.0"
 sled = { version = "0.34.7", features = ["compression"] }
 thiserror = "1.0.30"
+thousands = "0.2.0"
 time = "0.3.4"
 tokio = { version = "1.12.0", features = ["full"] }
 tracing = { version = "0.1.29", features = ["log"] }
