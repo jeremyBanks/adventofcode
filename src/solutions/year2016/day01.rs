@@ -2,16 +2,16 @@
 pub struct Solution {}
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
-enum Directions {
+enum Direction {
     North,
     West,
     South,
     East,
 }
 
-impl Directions {
+impl Direction {
     fn x(&self) -> i32 {
-        use Directions::*;
+        use Direction::*;
         match self {
             West => -1,
             East => 1,
@@ -20,7 +20,7 @@ impl Directions {
     }
 
     fn y(&self) -> i32 {
-        use Directions::*;
+        use Direction::*;
         match self {
             South => -1,
             North => 1,
@@ -29,7 +29,7 @@ impl Directions {
     }
 
     fn left(&self) -> Self {
-        use Directions::*;
+        use Direction::*;
         match self {
             West => North,
             South => West,
@@ -39,7 +39,7 @@ impl Directions {
     }
 
     fn right(&self) -> Self {
-        use Directions::*;
+        use Direction::*;
         match self {
             North => West,
             West => South,
@@ -60,7 +60,7 @@ impl crate::Solution for Solution {
 
         let mut x: i32 = 0;
         let mut y: i32 = 0;
-        let mut direction = Directions::North;
+        let mut direction = Direction::North;
         let mut visited: std::collections::HashSet<(i32, i32)> = [(0, 0)].into_iter().collect();
         let mut distance_two: Option<u32> = None;
 
@@ -75,14 +75,25 @@ impl crate::Solution for Solution {
                 _ => unreachable!(),
             };
 
-            x += direction.x() * distance;
-            y += direction.y() * distance;
-            // we don't just check the endpoints, we need to check every intermediate value?
-
-            if distance_two.is_none() {
-                let already_visited = !visited.insert((x, y));
-                if already_visited {
-                    distance_two = Some((x.abs() + y.abs()).try_into().unwrap());
+            if direction == Direction::East || direction == Direction::West {
+                for _ in 0..distance {
+                    x += direction.x();
+                    if distance_two.is_none() {
+                        let already_visited = !visited.insert((x, y));
+                        if already_visited {
+                            distance_two = Some((x.abs() + y.abs()).try_into().unwrap());
+                        }
+                    }
+                }
+            } else {
+                for _ in 0..distance {
+                    y += direction.y();
+                    if distance_two.is_none() {
+                        let already_visited = !visited.insert((x, y));
+                        if already_visited {
+                            distance_two = Some((x.abs() + y.abs()).try_into().unwrap());
+                        }
+                    }
                 }
             }
         }
