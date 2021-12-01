@@ -5,5 +5,20 @@ impl crate::Solution for Solution {
     const YEAR: u32 = 2017;
     const DAY: u32 = 1;
 
-    fn part_one(_input: &str) {}
+    type PartOne = u32;
+    fn part_one(input: &str) -> u32 {
+        let digits = input
+            .chars()
+            .map(|n| n.to_string().parse::<u32>().unwrap())
+            .collect::<Vec<_>>();
+
+        let mut sum = 0;
+        for (i, digit) in digits.iter().enumerate() {
+            let next = digits[(i + 1) % input.len()];
+            if *digit == next {
+                sum += digit;
+            }
+        }
+        sum
+    }
 }
