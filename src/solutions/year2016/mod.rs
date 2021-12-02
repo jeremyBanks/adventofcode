@@ -1,9 +1,7 @@
-use crate::Solution;
+crate::prelude!();
 
-mod day01;
-mod day02;
+pub mod day01;
 
-pub fn run_all() {
-    day01::Solution::run();
-    day02::Solution::run();
+pub fn solutions() -> Vec<Solution> {
+    vec![day01::solution()]
 }
