@@ -24,8 +24,6 @@ pub struct Solution {
     pub code: fn(&str) -> (String, String),
 }
 
-pub const UNIMPLEMENTED: &'static str = "unimplemented!()";
-
 pub trait DebugExt: Debug {
     fn to_debug(&self) -> String {
         format!("{:?}", self)

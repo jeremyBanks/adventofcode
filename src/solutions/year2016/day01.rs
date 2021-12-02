@@ -48,9 +48,9 @@ pub fn solution() -> Solution {
             }
 
             let distance_one = x.abs() + y.abs();
-            let distance_one = distance_one.try_into().unwrap();
+            let distance_one = distance_one.to_string();
 
-            let distance_two = distance_two.unwrap();
+            let distance_two = distance_two.unwrap().to_string();
 
             (distance_one, distance_two)
         },

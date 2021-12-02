@@ -52,20 +52,13 @@ pub fn run(solution: &Solution) -> () {
     });
     let input = input.trim();
     let start = Instant::now();
-    solution.code(input);
+    let result = (solution.code)(input);
     let duration = start.elapsed();
 
-    if &solution != &Default::default() {
-        println!(
-            "{:4} Day {:>2} = {:?}",
-            solution.year, solution.day, solution
-        );
-        println!(
-            "         Δt = {:>14}ns = {:?}",
-            duration.as_nanos().separate_with_commas(),
-            duration
-        );
-    }
-
-    solution;
+    println!("{:4} Day {:>2} = {:?}", solution.year, solution.day, result);
+    println!(
+        "         Δt = {:>14}ns = {:?}",
+        duration.as_nanos().separate_with_commas(),
+        duration
+    );
 }

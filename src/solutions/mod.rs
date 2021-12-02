@@ -16,5 +16,6 @@ pub fn solutions() -> Vec<Solution> {
     solutions.append(&mut year2018::solutions());
     solutions.append(&mut year2019::solutions());
     solutions.append(&mut year2020::solutions());
+    solutions.append(&mut year2021::solutions());
     solutions
 }
