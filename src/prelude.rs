@@ -24,29 +24,6 @@ pub use rayon::{
 };
 pub use thousands::Separable;
 
-macro_rules! prelude {
-    () => {
-        use crate::prelude::*;
-    };
-}
-
-macro_rules! solution {
-    { December $day:literal, $year:literal: $( $body: tt )*} => {
-        use crate::prelude::*;
-
-        pub fn solution() -> Solution {
-            Solution {
-                year: $year,
-                day: $day,
-                code: $( $body )*
-            }
-        }
-    };
-}
-
-pub(crate) use prelude;
-pub(crate) use solution;
-
 pub struct Solution {
     pub year: u32,
     pub day: u32,

@@ -1,4 +1,4 @@
-crate::prelude!();
+use crate::prelude::*;
 
 pub mod year2015;
 pub mod year2016;

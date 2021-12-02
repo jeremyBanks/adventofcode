@@ -1,9 +1,7 @@
 pub(crate) mod prelude;
 pub(crate) mod solutions;
 
-pub(crate) use prelude::prelude;
-
-crate::prelude!();
+use crate::prelude::*;
 
 pub fn main() {
     let solutions = crate::solutions::solutions();

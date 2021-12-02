@@ -1,4 +1,4 @@
-crate::prelude!();
+use crate::prelude::*;
 
 pub mod day01;
 pub mod day02;

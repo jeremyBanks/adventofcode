@@ -1,4 +1,4 @@
-crate::prelude!();
+use crate::prelude::*;
 
 pub fn solution() -> Solution {
     Solution {
