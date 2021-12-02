@@ -17,7 +17,23 @@ pub fn main() {
     }
 }
 
-pub fn run(solution: &Solution) -> () {
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_snapshot() {
+        let solutions = crate::solutions::solutions();
+
+        for solution in solutions.iter() {
+            let answer = run(solution);
+            let name = format!("year{}day{:02}_answer", solution.year, solution.day);
+            insta::assert_yaml_snapshot!(name, answer);
+        }
+    }
+}
+
+pub fn run(solution: &Solution) -> (String, String) {
     let input_path = format!(
         "./src/solutions/year{:04}/day{:02}-input.txt",
         solution.year, solution.day
@@ -63,4 +79,6 @@ pub fn run(solution: &Solution) -> () {
         duration.as_nanos().separate_with_commas(),
     );
     println!();
+
+    result
 }
