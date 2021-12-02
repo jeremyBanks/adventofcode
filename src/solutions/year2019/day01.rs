@@ -8,7 +8,7 @@ pub fn solution() -> Solution {
             let mut total_fuel_one = 0;
             let mut total_fuel_two = 0;
 
-            let masses = split_and_parse::<u32>(input, "\n");
+            let masses = input.lines_into::<u32>();
             for mass in masses {
                 let mut mass = mass;
                 for i in 0.. {

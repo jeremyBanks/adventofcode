@@ -5,12 +5,12 @@ pub fn solution() -> Solution {
         year: 2016,
         day: 1,
         code: |input| {
-            let instructions: Vec<&str> = input.split(", ").collect();
+            let instructions = input.split_vec(", ");
 
             let mut x: i32 = 0;
             let mut y: i32 = 0;
-            let mut direction = Direction::North;
-            let mut visited: std::collections::HashSet<(i32, i32)> = [(0, 0)].into_iter().collect();
+            let mut direction = CardinalDirection::North;
+            let mut visited: HashSet<(i32, i32)> = [(0, 0)].into_iter().collect();
             let mut distance_two: Option<u32> = None;
 
             for instruction in instructions {
@@ -24,7 +24,7 @@ pub fn solution() -> Solution {
                     _ => unreachable!(),
                 };
 
-                if direction == Direction::East || direction == Direction::West {
+                if direction == CardinalDirection::East || direction == CardinalDirection::West {
                     for _ in 0..distance {
                         x += direction.x();
                         if distance_two.is_none() {
@@ -54,53 +54,5 @@ pub fn solution() -> Solution {
 
             (distance_one, distance_two)
         },
-    }
-}
-
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-enum Direction {
-    North,
-    West,
-    South,
-    East,
-}
-
-impl Direction {
-    fn x(&self) -> i32 {
-        use Direction::*;
-        match self {
-            West => -1,
-            East => 1,
-            North | South => 0,
-        }
-    }
-
-    fn y(&self) -> i32 {
-        use Direction::*;
-        match self {
-            South => -1,
-            North => 1,
-            West | East => 0,
-        }
-    }
-
-    fn left(&self) -> Self {
-        use Direction::*;
-        match self {
-            West => North,
-            South => West,
-            East => South,
-            North => East,
-        }
-    }
-
-    fn right(&self) -> Self {
-        use Direction::*;
-        match self {
-            North => West,
-            West => South,
-            South => East,
-            East => North,
-        }
     }
 }

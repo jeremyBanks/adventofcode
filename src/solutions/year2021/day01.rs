@@ -5,7 +5,7 @@ pub fn solution() -> Solution {
         year: 2021,
         day: 1,
         code: |input| {
-            let depths: Vec<u32> = input.split('\n').map(|s| s.parse().unwrap()).collect();
+            let depths = input.lines_into::<i32>();
 
             let mut deeper_depths = 0;
             for i in 1..depths.len() {
@@ -16,7 +16,7 @@ pub fn solution() -> Solution {
                 }
             }
 
-            let mut sums = Vec::<u32>::new();
+            let mut sums = Vec::<i32>::new();
             for i in 2..depths.len() {
                 let first = depths[i - 2];
                 let second = depths[i - 1];

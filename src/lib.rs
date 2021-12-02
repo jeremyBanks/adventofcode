@@ -1,7 +1,3 @@
-#![allow(unused_imports)]
-
-use std::time::{Duration, Instant};
-
 pub(crate) mod prelude;
 pub(crate) mod solutions;
 

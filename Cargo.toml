@@ -8,7 +8,9 @@ edition = "2021"
 bincode = "1.3.3"
 blake3 = "1.1.0"
 bounded-integer = { version = "0.5.0", features = ["types", "serde"] }
+bytes = "1.0"
 color-eyre = "0.5.11"
+crossbeam = "0.8.1"
 derive_more = "0.99.16"
 dotenv = "0.15.0"
 erased-serde = "0.3.16"
@@ -20,8 +22,10 @@ log = "0.4.14"
 once_cell = "1.8.0"
 openssl = { version = "0.10.38", features = ["vendored"] }
 paste = "1.0.6"
+parking_lot = { version = "0.11", features = ["deadlock_detection", "serde"] }
 prost = "0.9.0"
 rand = "0.8.4"
+rayon = "*"
 regex = "1.5.4"
 remain = "0.2.2"
 reqwest = { version = "0.11.6", features = ["json", "blocking"] }

@@ -5,9 +5,9 @@ pub fn solution() -> Solution {
         year: 2020,
         day: 1,
         code: |input| {
-            let numbers = Vec::from_iter(input.split("\n").map(|n| n.parse::<u64>().unwrap()));
+            let numbers = input.lines_into::<i32>();
 
-            let mut product_one: Option<u64> = None;
+            let mut product_one: Option<i32> = None;
 
             for (i, x) in numbers.iter().cloned().enumerate() {
                 for (j, y) in numbers.iter().cloned().enumerate() {
@@ -22,7 +22,7 @@ pub fn solution() -> Solution {
                 }
             }
 
-            let mut product_two: Option<u64> = None;
+            let mut product_two: Option<i32> = None;
 
             for (i, x) in numbers.iter().cloned().enumerate() {
                 for (j, y) in numbers.iter().cloned().enumerate() {
