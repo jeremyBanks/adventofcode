@@ -24,7 +24,8 @@ pub fn run(solution: &Solution) -> () {
     );
 
     let input = std::fs::read_to_string(&input_path).unwrap_or_else(|_| {
-        let session_key = std::env::var("AOC_SESSION").unwrap();
+        let session_key =
+            std::env::var("AOC_SESSION").unwrap_or_else(|_| panic!("AOC_SESSION not set"));
         let input_url = format!(
             "https://adventofcode.com/{}/day/{}/input",
             solution.year, solution.day
