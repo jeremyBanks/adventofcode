@@ -18,7 +18,10 @@ pub fn solution() -> Solution {
                 }
             }
 
-            (floor.to_string(), instructions_to_basement.to_debug())
+            (
+                floor.to_string(),
+                instructions_to_basement.unwrap().to_string(),
+            )
         },
     }
 }

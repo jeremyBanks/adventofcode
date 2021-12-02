@@ -44,10 +44,6 @@ pub fn run(solution: &Solution) -> () {
         input.push('\n');
 
         std::fs::write(&input_path, &input).unwrap();
-        println!(
-            "{:4} Day {:>2}   input downloaded",
-            solution.year, solution.day
-        );
 
         input
     });
@@ -56,10 +52,15 @@ pub fn run(solution: &Solution) -> () {
     let result = (solution.code)(input);
     let duration = start.elapsed();
 
-    println!("{:4} Day {:>2} = {:?}", solution.year, solution.day, result);
     println!(
-        "         Δt = {:>14}ns = {:?}",
-        duration.as_nanos().separate_with_commas(),
-        duration
+        "{:4} Day {:>2}: A = {}",
+        solution.year, solution.day, result.0
     );
+    println!("             B = {}", result.1);
+    println!(
+        "            Δt = {:<14} = {:>14}ns",
+        duration.to_debug(),
+        duration.as_nanos().separate_with_commas(),
+    );
+    println!();
 }
