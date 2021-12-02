@@ -1,6 +1,6 @@
 crate::prelude!();
 
-pub fn solution() {
+pub fn solution() -> Solution {
     Solution {
         year: 2021,
         day: 1,
@@ -34,7 +34,7 @@ pub fn solution() {
                 }
             }
 
-            (deeper_depths, deeper_sums)
+            (deeper_depths.to_string(), deeper_sums.to_string())
         },
     }
 }

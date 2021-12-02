@@ -67,5 +67,5 @@ pub fn run(solution: &Solution) -> () {
         );
     }
 
-    solution
+    solution;
 }

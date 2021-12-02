@@ -1,6 +1,6 @@
 crate::prelude!();
 
-pub fn solution() {
+pub fn solution() -> Solution {
     Solution {
         year: 2015,
         day: 3,
@@ -21,7 +21,7 @@ pub fn solution() {
                     visited_alone.insert((x, y));
                 }
             }
-            let visited_alone = visited_alone.len().try_into().unwrap();
+            let visited_alone = visited_alone.len().to_string();
 
             let mut visited_with_robot: std::collections::HashSet<(i32, i32)> =
                 [(0, 0)].into_iter().collect();
@@ -53,7 +53,7 @@ pub fn solution() {
                     }
                 }
             }
-            let visited_with_robot = visited_with_robot.len().try_into().unwrap();
+            let visited_with_robot = visited_with_robot.len().to_string();
 
             (visited_alone, visited_with_robot)
         },

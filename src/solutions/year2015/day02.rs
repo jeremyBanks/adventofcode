@@ -1,6 +1,6 @@
 crate::prelude!();
 
-pub fn solution() {
+pub fn solution() -> Solution {
     Solution {
         year: 2015,
         day: 2,
