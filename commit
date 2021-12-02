@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-shopt -s inherit_errexit nullglob compat"${BASH_COMPAT=42}"
+shopt -s nullglob
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
 export TZ=UTC
