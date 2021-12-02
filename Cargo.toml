@@ -22,6 +22,7 @@ insta = "1.8.0"
 itertools = "*"
 log = "0.4.14"
 nom = "*"
+nom-derive = "*"
 nom-supreme = "*"
 once_cell = "1.8.0"
 openssl = { version = "0.10.38", features = ["vendored"] }

@@ -14,6 +14,7 @@ pub use bytes::{Buf, BufMut, Bytes, BytesMut};
 pub use crossbeam::channel::{bounded, unbounded};
 pub use eyre::{eyre, WrapErr};
 pub use itertools::Itertools;
+pub use nom_derive::Nom;
 pub use nom_supreme::ParserExt;
 pub use parking_lot::{Condvar, Mutex, Once, ReentrantMutex, RwLock};
 pub use rayon::{
