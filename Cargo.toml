@@ -56,9 +56,6 @@ url = { version = "2.2.2", features = ["serde"] }
 static-rc = "0.5.0"
 qcell = "0.4.3"
 boolinator = "2.4.0"
-nom = "7.1.0"
-nom-derive = "0.10.0"
-nom-supreme = "0.6.0"
 rayon = "1.5.1"
 itertools = "0.10.1"
 
