@@ -42,7 +42,7 @@ pub fn solution() -> Solution {
                         "forward" => {
                             position += magnitude;
                             depth += magnitude * aim;
-                        }
+                        },
                         _ => unreachable!(),
                     }
                 }
