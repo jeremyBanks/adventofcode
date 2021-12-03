@@ -1,4 +1,33 @@
+use nom::{
+    character::complete::digit1,
+    combinator::{map, map_res, recognize},
+    Parser,
+};
+
 use crate::prelude::*;
+
+#[derive(Debug, Clone)]
+pub enum RelativeDirection {
+    Right,
+    Left,
+}
+
+pub fn parse_direction(
+    input: &str,
+) -> nom::IResult<&str, (RelativeDirection, u32), nom_supreme::error::ErrorTree<&str>> {
+    let (input, direction) = nom::branch::alt((
+        map(nom_supreme::tag::complete::tag("L"), |_| {
+            RelativeDirection::Left
+        }),
+        map(nom_supreme::tag::complete::tag("R"), |_| {
+            RelativeDirection::Right
+        }),
+    ))(input)?;
+
+    let (input, magnitude) = map_res(recognize(digit1), str::parse::<u32>)(input)?;
+
+    Ok((input, (direction, magnitude)))
+}
 
 pub fn solution() -> Solution {
     Solution {
