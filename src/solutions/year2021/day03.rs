@@ -15,7 +15,7 @@ pub fn solution() -> Solution {
                 for (i, c) in line.chars().enumerate() {
                     match c {
                         '1' => frequencies[i] += 1,
-                        '0' => {}
+                        '0' => {},
                         _ => unreachable!(),
                     }
                 }
@@ -23,7 +23,7 @@ pub fn solution() -> Solution {
             let half = words / 2;
 
             let mut gamma = 0u64;
-            let mut epsilon = 064;
+            let mut epsilon = 0u64;
             for frequency in frequencies.iter().copied() {
                 gamma *= 2;
                 epsilon *= 2;
@@ -40,7 +40,7 @@ pub fn solution() -> Solution {
             dbg!(frequencies, half);
             let power_consumption = gamma * epsilon;
 
-            (power_consumption.to_string(), String::default())
+            (power_consumption.to_string(), "NOT IMPLEMENTED".to_string())
         },
     }
 }

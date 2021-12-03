@@ -1,3 +1,4 @@
+#![allow(clippy::comparison_chain)]
 #![warn(
     clippy::self_named_module_files,
     clippy::cargo,
