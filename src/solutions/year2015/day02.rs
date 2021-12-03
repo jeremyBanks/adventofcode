@@ -13,7 +13,7 @@ pub fn solution() -> Solution {
                 let mut dimensions =
                     Vec::from_iter(line.split('x').map(|n| n.parse::<u64>().unwrap()));
 
-                dimensions.sort();
+                dimensions.sort_unstable();
                 let a = dimensions[0];
                 let b = dimensions[1];
                 let c = dimensions[2];

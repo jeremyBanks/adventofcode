@@ -1,4 +1,17 @@
-#![allow(clippy::self_named_module_files)]
+#![warn(
+    clippy::self_named_module_files,
+    clippy::cargo,
+    clippy::separated_literal_suffix,
+    clippy::cast_lossless,
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_precision_loss,
+    clippy::cast_sign_loss,
+    clippy::cloned_instead_of_copied,
+    clippy::create_dir,
+    clippy::wildcard_imports,
+    clippy::default_trait_access
+)]
 
 pub(crate) mod common;
 pub(crate) mod prelude;

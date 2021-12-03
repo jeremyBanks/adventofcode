@@ -1,0 +1,4 @@
+set -veu
+cargo fix --edition-idioms --allow-dirty --allow-staged
+cargo +nightly clippy --fix --allow-dirty --allow-staged
+cargo +nightly fmt

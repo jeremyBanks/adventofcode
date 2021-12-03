@@ -9,8 +9,8 @@ pub fn solution() -> Solution {
 
             let mut product_one: Option<i32> = None;
 
-            for (i, x) in numbers.iter().cloned().enumerate() {
-                for (j, y) in numbers.iter().cloned().enumerate() {
+            for (i, x) in numbers.iter().copied().enumerate() {
+                for (j, y) in numbers.iter().copied().enumerate() {
                     if i == j {
                         continue;
                     }
@@ -24,12 +24,12 @@ pub fn solution() -> Solution {
 
             let mut product_two: Option<i32> = None;
 
-            for (i, x) in numbers.iter().cloned().enumerate() {
-                for (j, y) in numbers.iter().cloned().enumerate() {
+            for (i, x) in numbers.iter().copied().enumerate() {
+                for (j, y) in numbers.iter().copied().enumerate() {
                     if i == j {
                         continue;
                     }
-                    for (k, z) in numbers.iter().cloned().enumerate() {
+                    for (k, z) in numbers.iter().copied().enumerate() {
                         if i == k || j == k {
                             continue;
                         }

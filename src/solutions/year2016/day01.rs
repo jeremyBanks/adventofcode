@@ -14,7 +14,7 @@ pub fn solution() -> Solution {
             let mut distance_two: Option<u32> = None;
 
             for instruction in instructions {
-                let turn = instruction.chars().nth(0).unwrap();
+                let turn = instruction.chars().next().unwrap();
                 let distance = instruction.chars().skip(1).collect::<String>();
                 let distance = distance.parse::<i32>().unwrap();
 
