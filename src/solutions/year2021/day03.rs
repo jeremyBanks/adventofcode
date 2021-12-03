@@ -37,10 +37,9 @@ pub fn solution() -> Solution {
                 }
             }
 
-            dbg!(frequencies, half);
             let power_consumption = gamma * epsilon;
 
-            (power_consumption.to_string(), "NOT IMPLEMENTED".to_string())
+            (power_consumption.to_string(), "TODO".to_string())
         },
     }
 }
