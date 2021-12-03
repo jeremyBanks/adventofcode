@@ -1,3 +1,5 @@
+#![allow(clippy::self_named_module_files)]
+
 pub(crate) mod common;
 pub(crate) mod prelude;
 pub(crate) mod solutions;
