@@ -45,6 +45,7 @@ dependencies = [
  "parking_lot",
  "paste",
  "prost",
+ "qcell",
  "rand",
  "rayon",
  "regex",
@@ -58,6 +59,7 @@ dependencies = [
  "serde_rusqlite",
  "serde_urlencoded",
  "sled",
+ "static-rc",
  "thiserror",
  "thousands",
  "time",
@@ -1421,6 +1423,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "qcell"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2e2b4c7d8d615d32bb11eb895985dab6a136958fb35cbc46d44c2b7efee8ba9a"
+dependencies = [
+ "once_cell",
+]
+
+[[package]]
 name = "quote"
 version = "1.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1838,6 +1849,12 @@ dependencies = [
  "libc",
  "winapi",
 ]
+
+[[package]]
+name = "static-rc"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "83b7d8e792a05af115e097af2513e1c28ac1b993bcc553e56bcf14d1e954e8ff"
 
 [[package]]
 name = "syn"
