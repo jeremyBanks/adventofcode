@@ -75,15 +75,86 @@ pub fn run(solution: &Solution) -> (String, String) {
 
         input
     });
+
     let input = input.trim();
+
+    let page_path = format!(
+        "./src/solutions/year{:04}/day{:02}.txt",
+        solution.year, solution.day
+    );
+
+    let page = std::fs::read_to_string(&page_path).unwrap_or_else(|_| {
+        let session_key =
+            std::env::var("AOC_SESSION").unwrap_or_else(|_| panic!("AOC_SESSION not set"));
+        let page_url = format!(
+            "https://adventofcode.com/{}/day/{}",
+            solution.year, solution.day
+        );
+        let mut page = reqwest::blocking::Client::new()
+            .get(page_url)
+            .header(reqwest::header::COOKIE, format!("session={}", session_key))
+            .send()
+            .unwrap()
+            .error_for_status()
+            .unwrap()
+            .text()
+            .unwrap()
+            .trim()
+            .to_string();
+
+        let page = page
+            .split("\n")
+            .skip_while(|line| !line.starts_with("<main"))
+            .skip(1)
+            .take_while(|line| !line.starts_with("</main"))
+            .join("\n");
+
+        let parts = page
+            .split("<article class=\"day-desc\">")
+            .skip(1)
+            .map(|chunk| chunk.split("</article>").next().unwrap())
+            .collect::<Vec<_>>();
+
+        let part_one = parts[0].to_string();
+        let part_two = parts.get(1);
+
+        let title = part_one
+            .split("<h2>--- ")
+            .skip(1)
+            .next()
+            .unwrap()
+            .split(" ---</h2>")
+            .next()
+            .unwrap()
+            .split(": ")
+            .skip(1)
+            .next()
+            .unwrap();
+
+        let page = format!(
+            "# {}\n\n## Part One\n\n{}\n\n## Part Two\n\n{}\n",
+            title,
+            part_one,
+            part_two.unwrap_or(&"*unknown*")
+        );
+
+        if part_two.is_some() {
+            // Only save if we have both parts.
+            // XXX: This could misbehave? Do something smarter?
+            std::fs::write(&page_path, &page).unwrap();
+        }
+
+        page
+    });
+
+    let title = page.split("\n").next().unwrap().strip_prefix("# ").unwrap();
+
     let start = Instant::now();
     let result = (solution.code)(input);
     let duration = start.elapsed();
 
-    println!(
-        "{:4} Day {:>2}: A = {}",
-        solution.year, solution.day, result.0
-    );
+    println!("{:4} Day {:>2}: {}", solution.year, solution.day, title);
+    println!("             A = {}", result.0);
     println!("             B = {}", result.1);
     println!(
         "            Δt = {:<14} = {:>14}ns",
@@ -125,7 +196,7 @@ fn main_like_its_2018() {
         _ => {
             println!("usage: {} [PROBLEM_NUMBER]", argv[0]);
             return;
-        },
+        }
     };
 
     if let Some(n) = n {
@@ -579,7 +650,7 @@ impl Problem<uint, uint> for ReposeRecord {
                     }
                     current_guard = Some(guard_id);
                     current_sleep_start_minute = None;
-                },
+                }
                 Type::WakesUp => {
                     if let Some(start_minute) = current_sleep_start_minute {
                         if let Some(old_guard_id) = current_guard {
@@ -598,10 +669,10 @@ impl Problem<uint, uint> for ReposeRecord {
                         }
                     }
                     current_sleep_start_minute = None;
-                },
+                }
                 Type::FallsAsleep => {
                     current_sleep_start_minute = Some(event.minute);
-                },
+                }
             }
         }
 
@@ -827,7 +898,7 @@ impl Problem<uint, Unknown> for ChronalCoordinates {
                                 .entry(filler.origin)
                                 .and_modify(|n| *n += 1)
                                 .or_insert(1);
-                        },
+                        }
                         Space::ClosestTo { danger } => {
                             if danger == filler.origin {
                                 // oops
@@ -851,8 +922,8 @@ impl Problem<uint, Unknown> for ChronalCoordinates {
                                 };
                                 alive = true;
                             }
-                        },
-                        Space::Tied { distance } =>
+                        }
+                        Space::Tied { distance } => {
                             if distance > new_distance {
                                 spaces[x + y * width] = Space::ClosestTo {
                                     danger: filler.origin,
@@ -862,7 +933,8 @@ impl Problem<uint, Unknown> for ChronalCoordinates {
                                     .and_modify(|n| *n += 1)
                                     .or_insert(1);
                                 alive = true;
-                            },
+                            }
+                        }
                     }
                 }
             }

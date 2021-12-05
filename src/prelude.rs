@@ -5,7 +5,6 @@ pub use std::{
     cmp::{Ord, Ordering},
     collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque},
     convert::TryFrom,
-    env,
     fmt::{Debug, Display},
     rc::Rc,
     str::FromStr,
