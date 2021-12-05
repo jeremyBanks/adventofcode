@@ -1,4 +1,4 @@
-#![allow(clippy::comparison_chain, clippy::cargo)]
+#![allow(clippy::comparison_chain, clippy::cargo, clippy::pedantic)]
 #![warn(
     clippy::self_named_module_files,
     clippy::unseparated_literal_suffix,
@@ -90,7 +90,7 @@ pub fn run(solution: &Solution) -> (String, String) {
             "https://adventofcode.com/{}/day/{}",
             solution.year, solution.day
         );
-        let mut page = reqwest::blocking::Client::new()
+        let page = reqwest::blocking::Client::new()
             .get(page_url)
             .header(reqwest::header::COOKIE, format!("session={}", session_key))
             .send()
@@ -103,7 +103,7 @@ pub fn run(solution: &Solution) -> (String, String) {
             .to_string();
 
         let page = page
-            .split("\n")
+            .split('\n')
             .skip_while(|line| !line.starts_with("<main"))
             .skip(1)
             .take_while(|line| !line.starts_with("</main"))
@@ -120,15 +120,13 @@ pub fn run(solution: &Solution) -> (String, String) {
 
         let title = part_one
             .split("<h2>--- ")
-            .skip(1)
-            .next()
+            .nth(1)
             .unwrap()
             .split(" ---</h2>")
             .next()
             .unwrap()
             .split(": ")
-            .skip(1)
-            .next()
+            .nth(1)
             .unwrap();
 
         let page = format!(
@@ -139,15 +137,15 @@ pub fn run(solution: &Solution) -> (String, String) {
         );
 
         if part_two.is_some() {
-            // Only save if we have both parts.
-            // XXX: This could misbehave? Do something smarter?
             std::fs::write(&page_path, &page).unwrap();
+        } else {
+            tracing::warn!("not saving problem because we only have part one");
         }
 
         page
     });
 
-    let title = page.split("\n").next().unwrap().strip_prefix("# ").unwrap();
+    let title = page.split('\n').next().unwrap().strip_prefix("# ").unwrap();
 
     let start = Instant::now();
     let result = (solution.code)(input);
@@ -177,34 +175,10 @@ fn main_like_its_2018() {
         Box::new(|| ReposeRecord.run()),
         Box::new(|| AlchemicalReduction.run()),
         Box::new(|| ChronalCoordinates.run()),
-        Box::new(|| UnimplementedDay::new(7, "The Sum of Its Parts").run()),
-        Box::new(|| UnimplementedDay::new(8, "Memory Manuver").run()),
-        Box::new(|| UnimplementedDay::new(9, "Marble Mania").run()),
-        Box::new(|| UnimplementedDay::new(10, "The Stars Align").run()),
-        Box::new(|| UnimplementedDay::new(11, "Chronal Charge").run()),
-        Box::new(|| UnimplementedDay::new(12, "Subterranean Sustainability").run()),
-        Box::new(|| UnimplementedDay::new(13, "Mine Cart Madness").run()),
-        Box::new(|| UnimplementedDay::new(14, "Chocolate Charts").run()),
-        Box::new(|| UnimplementedDay::new(15, "Beverage Bandits").run()),
     ];
 
-    let argv: Vec<String> = std::env::args().collect();
-
-    let n: Option<uint> = match argv.len() {
-        1 => None,
-        2 => Some(argv[1].parse().unwrap()),
-        _ => {
-            println!("usage: {} [PROBLEM_NUMBER]", argv[0]);
-            return;
-        }
-    };
-
-    if let Some(n) = n {
-        solutions[n - 1]()
-    } else {
-        for f in solutions {
-            f()
-        }
+    for f in solutions {
+        f()
     }
 }
 
@@ -343,9 +317,7 @@ mod common2018 {
         !('0'..='9').contains(c)
     }
 }
-use self::common2018::{
-    int, is_digit, is_not_digit, uint, Problem, UnimplementedDay, Unknown, UINT_MAX,
-};
+use self::common2018::{int, is_digit, is_not_digit, uint, Problem, Unknown, UINT_MAX};
 
 struct ChronalCalibration;
 impl Problem<int, int> for ChronalCalibration {
@@ -650,7 +622,7 @@ impl Problem<uint, uint> for ReposeRecord {
                     }
                     current_guard = Some(guard_id);
                     current_sleep_start_minute = None;
-                }
+                },
                 Type::WakesUp => {
                     if let Some(start_minute) = current_sleep_start_minute {
                         if let Some(old_guard_id) = current_guard {
@@ -669,10 +641,10 @@ impl Problem<uint, uint> for ReposeRecord {
                         }
                     }
                     current_sleep_start_minute = None;
-                }
+                },
                 Type::FallsAsleep => {
                     current_sleep_start_minute = Some(event.minute);
-                }
+                },
             }
         }
 
@@ -898,7 +870,7 @@ impl Problem<uint, Unknown> for ChronalCoordinates {
                                 .entry(filler.origin)
                                 .and_modify(|n| *n += 1)
                                 .or_insert(1);
-                        }
+                        },
                         Space::ClosestTo { danger } => {
                             if danger == filler.origin {
                                 // oops
@@ -922,8 +894,8 @@ impl Problem<uint, Unknown> for ChronalCoordinates {
                                 };
                                 alive = true;
                             }
-                        }
-                        Space::Tied { distance } => {
+                        },
+                        Space::Tied { distance } =>
                             if distance > new_distance {
                                 spaces[x + y * width] = Space::ClosestTo {
                                     danger: filler.origin,
@@ -933,8 +905,7 @@ impl Problem<uint, Unknown> for ChronalCoordinates {
                                     .and_modify(|n| *n += 1)
                                     .or_insert(1);
                                 alive = true;
-                            }
-                        }
+                            },
                     }
                 }
             }
