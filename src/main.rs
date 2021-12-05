@@ -1,19 +1,3 @@
-#![feature(
-    duration_as_u128,
-    range_contains,
-    associated_type_defaults,
-    never_type,
-    try_from,
-    const_fn
-)]
-
-#[macro_use]
-extern crate derive_more;
-
-#[macro_use]
-extern crate proptest;
-use proptest::prelude::*;
-
 use std::{
     cmp::{Ord, Ordering},
     collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque},
@@ -21,9 +5,36 @@ use std::{
     env,
 };
 
+use proptest::prelude::*;
 use regex::Regex;
 
 fn main() {
+    dotenv::dotenv().unwrap();
+    color_eyre::install().unwrap();
+    tracing_subscriber::util::SubscriberInitExt::init(tracing_subscriber::Layer::with_subscriber(
+        tracing_error::ErrorLayer::default(),
+        tracing_subscriber::fmt()
+            .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+            .with_target(false)
+            .with_span_events(
+                tracing_subscriber::fmt::format::FmtSpan::NEW
+                    | tracing_subscriber::fmt::format::FmtSpan::CLOSE,
+            )
+            .finish(),
+    ));
+
+    // let runtime = tokio::runtime::Builder::new_multi_thread()
+    //     .enable_all()
+    //     .build()
+    //     .expect("fatal error");
+
+    // runtime.block_on(
+    advent::main();
+
+    main_like_its_2018();
+}
+
+fn main_like_its_2018() {
     println!("🎄Advent of Code 2018");
     println!();
 
@@ -53,7 +64,7 @@ fn main() {
         _ => {
             println!("usage: {} [PROBLEM_NUMBER]", argv[0]);
             return;
-        }
+        },
     };
 
     if let Some(n) = n {
@@ -503,7 +514,7 @@ impl Problem<uint, uint> for ReposeRecord {
                     }
                     current_guard = Some(guard_id);
                     current_sleep_start_minute = None;
-                }
+                },
                 Type::WakesUp => {
                     if let Some(start_minute) = current_sleep_start_minute {
                         if let Some(old_guard_id) = current_guard {
@@ -522,10 +533,10 @@ impl Problem<uint, uint> for ReposeRecord {
                         }
                     }
                     current_sleep_start_minute = None;
-                }
+                },
                 Type::FallsAsleep => {
                     current_sleep_start_minute = Some(event.minute);
-                }
+                },
             }
         }
 
@@ -751,7 +762,7 @@ impl Problem<uint, Unknown> for ChronalCoordinates {
                                 .entry(filler.origin)
                                 .and_modify(|n| *n += 1)
                                 .or_insert(1);
-                        }
+                        },
                         Space::ClosestTo { danger } => {
                             if danger == filler.origin {
                                 // oops
@@ -775,8 +786,8 @@ impl Problem<uint, Unknown> for ChronalCoordinates {
                                 };
                                 alive = true;
                             }
-                        }
-                        Space::Tied { distance } => {
+                        },
+                        Space::Tied { distance } =>
                             if distance > new_distance {
                                 spaces[x + y * width] = Space::ClosestTo {
                                     danger: filler.origin,
@@ -786,8 +797,7 @@ impl Problem<uint, Unknown> for ChronalCoordinates {
                                     .and_modify(|n| *n += 1)
                                     .or_insert(1);
                                 alive = true;
-                            }
-                        }
+                            },
                     }
                 }
             }
