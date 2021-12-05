@@ -38,6 +38,8 @@ pub async fn run(solution: &Solution) -> (String, String) {
         solution.year, solution.day
     );
 
+    let client = reqwest::Client::new();
+
     let mut input = std::fs::read_to_string(&input_path);
 
     if input.is_err() {
@@ -48,7 +50,7 @@ pub async fn run(solution: &Solution) -> (String, String) {
                 "https://adventofcode.com/{}/day/{}/input",
                 solution.year, solution.day
             );
-            let mut input = reqwest::Client::new()
+            let mut input = client
                 .get(input_url)
                 .header(reqwest::header::COOKIE, format!("session={}", session_key))
                 .send()
@@ -87,7 +89,7 @@ pub async fn run(solution: &Solution) -> (String, String) {
                 "https://adventofcode.com/{}/day/{}",
                 solution.year, solution.day
             );
-            let page = reqwest::Client::new()
+            let page = client
                 .get(&page_url)
                 .header(reqwest::header::COOKIE, format!("session={}", session_key))
                 .send()
