@@ -2,7 +2,10 @@
 
 pub use std::{
     any::Any,
+    cmp::{Ord, Ordering},
     collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque},
+    convert::TryFrom,
+    env,
     fmt::{Debug, Display},
     rc::Rc,
     str::FromStr,
@@ -25,6 +28,7 @@ pub use rayon::{
     slice::{ParallelSlice, ParallelSliceMut},
     str::ParallelString,
 };
+pub use regex::Regex;
 pub use thousands::Separable;
 
 pub use crate::common::*;

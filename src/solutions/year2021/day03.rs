@@ -10,7 +10,7 @@ pub fn solution() -> Solution {
             let bits_per_word = lines[0].len();
             let words = lines.len();
 
-            let mut frequencies = vec![0usize; bits_per_word];
+            let mut frequencies = vec![0_usize; bits_per_word];
             for line in lines {
                 for (i, c) in line.chars().enumerate() {
                     match c {
@@ -22,8 +22,8 @@ pub fn solution() -> Solution {
             }
             let half = words / 2;
 
-            let mut gamma = 0u64;
-            let mut epsilon = 0u64;
+            let mut gamma = 0_u64;
+            let mut epsilon = 0_u64;
             for frequency in frequencies.iter().copied() {
                 gamma *= 2;
                 epsilon *= 2;
