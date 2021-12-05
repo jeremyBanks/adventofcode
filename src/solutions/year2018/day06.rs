@@ -103,7 +103,7 @@ pub fn solution() -> Solution {
                                     .entry(filler.origin)
                                     .and_modify(|n| *n += 1)
                                     .or_insert(1);
-                            }
+                            },
                             Space::ClosestTo { danger } => {
                                 if danger == filler.origin {
                                     // oops
@@ -127,8 +127,8 @@ pub fn solution() -> Solution {
                                     };
                                     alive = true;
                                 }
-                            }
-                            Space::Tied { distance } => {
+                            },
+                            Space::Tied { distance } =>
                                 if distance > new_distance {
                                     spaces[(x + y * width) as usize] = Space::ClosestTo {
                                         danger: filler.origin,
@@ -138,8 +138,7 @@ pub fn solution() -> Solution {
                                         .and_modify(|n| *n += 1)
                                         .or_insert(1);
                                     alive = true;
-                                }
-                            }
+                                },
                         }
                     }
                 }

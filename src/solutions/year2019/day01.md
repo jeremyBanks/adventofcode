@@ -1,8 +1,10 @@
 # The Tyranny of the Rocket Equation
 
+https://adventofcode.com/2019/day/1
+
 ## Part One
 
-<h2>--- Day 1: The Tyranny of the Rocket Equation ---</h2><p>Santa has become stranded at the edge of the Solar System while delivering presents to other planets! To accurately calculate his position in space, safely align his warp drive, and return to Earth in time to save Christmas, he needs you to bring him <span title="If only you had time to grab an astrolabe.">measurements</span> from <em class="star">fifty stars</em>.</p>
+<p>Santa has become stranded at the edge of the Solar System while delivering presents to other planets! To accurately calculate his position in space, safely align his warp drive, and return to Earth in time to save Christmas, he needs you to bring him <span title="If only you had time to grab an astrolabe.">measurements</span> from <em class="star">fifty stars</em>.</p>
 <p>Collect stars by solving puzzles.  Two puzzles will be made available on each day in the Advent calendar; the second puzzle is unlocked when you complete the first.  Each puzzle grants <em class="star">one star</em>. Good luck!</p>
 <p>The Elves quickly load you into a spacecraft and prepare to launch.</p>
 <p>At the first Go / No Go poll, every Elf is Go until the Fuel Counter-Upper.  They haven't determined the amount of fuel required yet.</p>
@@ -17,10 +19,9 @@
 <p>The Fuel Counter-Upper needs to know the total fuel requirement.  To find it, individually calculate the fuel needed for the mass of each module (your puzzle input), then add together all the fuel values.</p>
 <p><em>What is the sum of the fuel requirements</em> for all of the modules on your spacecraft?</p>
 
-
 ## Part Two
 
-<h2 id="part2">--- Part Two ---</h2><p>During the second Go / No Go poll, the Elf in charge of the Rocket Equation Double-Checker stops the launch sequence.  Apparently, you forgot to include additional fuel for the fuel you just added.</p>
+<p>During the second Go / No Go poll, the Elf in charge of the Rocket Equation Double-Checker stops the launch sequence.  Apparently, you forgot to include additional fuel for the fuel you just added.</p>
 <p>Fuel itself requires fuel just like a module - take its mass, divide by three, round down, and subtract 2.  However, that fuel <em>also</em> requires fuel, and <em>that</em> fuel requires fuel, and so on.  Any mass that would require <em>negative fuel</em> should instead be treated as if it requires <em>zero fuel</em>; the remaining mass, if any, is instead handled by <em>wishing really hard</em>, which has no mass and is outside the scope of this calculation.</p>
 <p>So, for each module mass, calculate its fuel and add it to the total.  Then, treat the fuel amount you just calculated as the input mass and repeat the process, continuing until a fuel requirement is zero or negative. For example:</p>
 <ul>
@@ -29,4 +30,3 @@
 <li>The fuel required by a module of mass <code>100756</code> and its fuel is: <code>33583 + 11192 + 3728 + 1240 + 411 + 135 + 43 + 12 + 2 = 50346</code>.</li>
 </ul>
 <p><em>What is the sum of the fuel requirements</em> for all of the modules on your spacecraft when also taking into account the mass of the added fuel? (Calculate the fuel requirements for each module separately, then add them all up at the end.)</p>
-

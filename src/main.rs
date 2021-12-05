@@ -13,12 +13,10 @@ fn main() {
             .finish(),
     ));
 
-    // let runtime = tokio::runtime::Builder::new_multi_thread()
-    //     .enable_all()
-    //     .build()
-    //     .expect("fatal error");
+    let runtime = tokio::runtime::Builder::new_multi_thread()
+        .enable_all()
+        .build()
+        .expect("fatal error");
 
-    // runtime.block_on(
-    advent::main()
-    // )
+    runtime.block_on(advent::main())
 }

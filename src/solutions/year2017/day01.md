@@ -1,8 +1,10 @@
 # Inverse Captcha
 
+https://adventofcode.com/2017/day/1
+
 ## Part One
 
-<h2>--- Day 1: Inverse Captcha ---</h2><p>The night before Christmas, one of Santa's Elves calls you in a panic. "The printer's broken! We can't print the <em>Naughty or Nice List</em>!" By the time you make it to <span title="Floor 17: cafeteria, printing department, and experimental organic digitization equipment.">sub-basement 17</span>, there are only a few minutes until midnight. "We have a big problem," she says; "there must be almost <em>fifty</em> bugs in this system, but nothing else can print The List. Stand in this square, quick! There's no time to explain; if you can convince them to pay you in <em class="star">stars</em>, you'll be able to--" She pulls a lever and the world goes blurry.</p>
+<p>The night before Christmas, one of Santa's Elves calls you in a panic. "The printer's broken! We can't print the <em>Naughty or Nice List</em>!" By the time you make it to <span title="Floor 17: cafeteria, printing department, and experimental organic digitization equipment.">sub-basement 17</span>, there are only a few minutes until midnight. "We have a big problem," she says; "there must be almost <em>fifty</em> bugs in this system, but nothing else can print The List. Stand in this square, quick! There's no time to explain; if you can convince them to pay you in <em class="star">stars</em>, you'll be able to--" She pulls a lever and the world goes blurry.</p>
 <p>When your eyes can focus again, everything seems a lot more pixelated than before. She must have sent you inside the computer! You check the system clock: <em>25 milliseconds</em> until midnight. With that much time, you should be able to collect all <em class="star">fifty stars</em> by December 25th.</p>
 <p>Collect stars by solving puzzles.  Two puzzles will be made available on each <s style="text-decoration-color:#fff;">day</s> millisecond in the Advent calendar; the second puzzle is unlocked when you complete the first.  Each puzzle grants <em class="star">one star</em>. Good luck!</p>
 <p>You're standing in a room with "digitization quarantine" written in LEDs along one wall. The only door is locked, but it includes a small interface. "Restricted Area - Strictly No Digitized Users Allowed."</p>
@@ -17,10 +19,9 @@
 </ul>
 <p><em>What is the solution</em> to your captcha?</p>
 
-
 ## Part Two
 
-<h2 id="part2">--- Part Two ---</h2><p>You notice a progress bar that jumps to 50% completion. Apparently, the door isn't yet satisfied, but it did emit a <em class="star">star</em> as encouragement. The instructions change:</p>
+<p>You notice a progress bar that jumps to 50% completion. Apparently, the door isn't yet satisfied, but it did emit a <em class="star">star</em> as encouragement. The instructions change:</p>
 <p>Now, instead of considering the <em>next</em> digit, it wants you to consider the digit <em>halfway around</em> the circular list.  That is, if your list contains <code>10</code> items, only include a digit in your sum if the digit <code>10/2 = 5</code> steps forward matches it. Fortunately, your list has an even number of elements.</p>
 <p>For example:</p>
 <ul>
@@ -31,4 +32,3 @@
 <li><code>12131415</code> produces <code>4</code>.</li>
 </ul>
 <p><em>What is the solution</em> to your new captcha?</p>
-
