@@ -97,3 +97,11 @@ impl CardinalDirection {
         }
     }
 }
+
+pub fn is_digit(c: &char) -> bool {
+    ('0'..='9').contains(c)
+}
+
+pub fn is_not_digit(c: &char) -> bool {
+    !('0'..='9').contains(c)
+}
