@@ -32,7 +32,7 @@ pub fn solution() -> Solution {
                     }
                 }
 
-                reactor.len() as u32
+                u32::try_from(reactor.len()).unwrap()
             }
 
             let solution_5a = post_reaction_size(input.chars());
