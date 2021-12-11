@@ -32,35 +32,41 @@ pub fn solution() -> Solution {
                 } else if frequency < half {
                     epsilon += 1;
                 } else {
-                    panic!("is this defined?");
+                    panic!(
+                        "i don't handle the case where they're tied 'cause that's not in my input"
+                    );
                 }
             }
 
             let power_consumption = gamma * epsilon;
 
-            let potential_generator_ratings: HashSet<_> = lines.iter().collect();
-                for (bit_index, ones_count) in frequencies.iter().copied().enumerate() {
-                    let expected_bit_value = if ones_count 
-
-                    if potential_generator_ratings.len() == 1 {
-                        break;
-                    }
+            let mut potential_generator_ratings: HashSet<_> = lines.iter().collect();
+            for (bit_index, ones_count) in frequencies.iter().copied().enumerate() {
+                if potential_generator_ratings.len() == 1 {
+                    break;
                 }
+
+                let expected_bit = if ones_count >= half { '1' } else { '0' };
+                potential_generator_ratings
+                    .retain(|rating| rating.chars().nth(bit_index).unwrap() == expected_bit);
+            }
             assert!(potential_generator_ratings.len() == 1);
             let generator_rating =
                 i64::from_str_radix(potential_generator_ratings.iter().next().unwrap(), 2).unwrap();
 
-            let potential_scrubber_ratings: HashSet<_> = lines.iter().collect();
-            while potential_scrubber_ratings.len() > 1 {
-                for (bit_index, ones_count) in frequencies.iter().copied().enumerate() {
-                    if potential_scrubber_ratings.len() == 1 {
-                        break;
-                    }
+            let mut potential_scrubber_ratings: HashSet<_> = lines.iter().collect();
+            for (bit_index, ones_count) in frequencies.iter().copied().enumerate() {
+                if potential_scrubber_ratings.len() == 1 {
+                    break;
                 }
+
+                let expected_bit = if ones_count >= half { '0' } else { '1' };
+                potential_scrubber_ratings
+                    .retain(|rating| rating.chars().nth(bit_index).unwrap() == expected_bit);
             }
             assert!(potential_scrubber_ratings.len() == 1);
             let scrubber_rating =
-                i64::from_str_radix(potential_generator_ratings.iter().next().unwrap(), 2).unwrap();
+                i64::from_str_radix(potential_scrubber_ratings.iter().next().unwrap(), 2).unwrap();
 
             let life_support_rating = generator_rating * scrubber_rating;
 
