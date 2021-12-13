@@ -35,12 +35,12 @@ pub fn solution() -> Solution {
 
             let mut diamond_digits = String::new();
 
-            let mut position: (i32, i32) = (2, 2);
+            let mut position: (i32, i32) = (0, 2);
 
             for line in input.lines() {
-                let old_position = position;
-
                 for character in line.chars() {
+                    let old_position = position;
+
                     match character {
                         'U' => position.1 = (position.1 - 1).clamp(0, 4),
                         'D' => position.1 = (position.1 + 1).clamp(0, 4),
@@ -49,19 +49,13 @@ pub fn solution() -> Solution {
                         _ => panic!("invalid input?"),
                     }
 
-                    let value = diamond_keypad[position.1 as usize][position.0 as usize];
-                    if let Some(_key_character) = value {
-                    } else {
+                    if diamond_keypad[position.1 as usize][position.0 as usize].is_none() {
                         position = old_position;
                     }
                 }
 
-                let value = diamond_keypad[position.1 as usize][position.0 as usize];
-                if let Some(key_character) = value {
-                    diamond_digits.push(key_character);
-                } else {
-                    position = old_position;
-                }
+                diamond_digits
+                    .push(diamond_keypad[position.1 as usize][position.0 as usize].unwrap());
             }
 
             (digits, diamond_digits)
