@@ -38,6 +38,7 @@ pub struct Args {
 pub async fn main(args: Args) {
     let solutions = crate::solutions::solutions();
 
+    let mut any = false;
     for solution in solutions.iter() {
         if args.year.is_some() && args.year != Some(solution.year) {
             continue;
@@ -45,7 +46,12 @@ pub async fn main(args: Args) {
         if args.day.is_some() && args.day != Some(solution.day) {
             continue;
         }
+        any = true;
         run(solution).await;
+    }
+
+    if !any {
+        tracing::error!("No solutions found for {:?}.", &args);
     }
 }
 
