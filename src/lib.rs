@@ -24,10 +24,28 @@ pub(crate) mod solutions;
 
 use crate::prelude::*;
 
-pub async fn main() {
+/// My Advent of Code solutions in Rust.
+#[derive(clap::Parser, Debug)]
+#[clap(about, author)]
+pub struct Args {
+    /// Filter which years to run. (Defaults to all.)
+    pub year: Option<u32>,
+
+    /// Filter which days to run. (Defaults to all.)
+    pub day: Option<u32>,
+}
+
+
+pub async fn main(args: Args) {
     let solutions = crate::solutions::solutions();
 
     for solution in solutions.iter() {
+        if args.year.is_some() && args.year != Some(solution.year) {
+            continue;
+        }
+        if args.day.is_some() && args.day != Some(solution.day) {
+            continue;
+        }
         run(solution).await;
     }
 }

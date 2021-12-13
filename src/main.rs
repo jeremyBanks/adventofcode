@@ -1,3 +1,5 @@
+use clap::Parser;
+
 fn main() {
     dotenv::dotenv().unwrap();
     color_eyre::install().unwrap();
@@ -18,5 +20,6 @@ fn main() {
         .build()
         .expect("fatal error");
 
-    runtime.block_on(advent::main())
+    let args = advent::Args::parse();
+    runtime.block_on(advent::main(args))
 }
