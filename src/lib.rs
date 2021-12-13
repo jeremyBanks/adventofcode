@@ -28,13 +28,12 @@ use crate::prelude::*;
 #[derive(clap::Parser, Debug)]
 #[clap(about, author)]
 pub struct Args {
-    /// Filter which years to run. (Defaults to all.)
+    /// Optionally, specify a single year to run (instead of all).
     pub year: Option<u32>,
 
-    /// Filter which days to run. (Defaults to all.)
+    /// Optionally, specify a single day to run (instead of all).
     pub day: Option<u32>,
 }
-
 
 pub async fn main(args: Args) {
     let solutions = crate::solutions::solutions();
