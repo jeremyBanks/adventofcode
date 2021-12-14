@@ -57,16 +57,18 @@ pub fn solution() -> Solution {
                     buffer.rotate_right(distance);
                 } else if let Some(captures) = ROTATE_BASED_ON_LETTER.captures(line) {
                     let letter: u8 = captures[1].as_bytes()[0];
-                    dbg!("TODO", &captures[0], letter);
+                    let index = line.as_bytes().iter().position(|l| *l == letter).unwrap();
+                    let distance = 1 + index + if index >= 4 { 1 } else { 0 };
+                    buffer.rotate_right(distance % buffer.len());
                 } else if let Some(captures) = REVERSE_SPAN.captures(line) {
                     let position_a: usize = captures[1].parse().unwrap();
                     let position_b: usize = captures[2].parse().unwrap();
                     buffer.make_contiguous()[position_a..=position_b].reverse();
-                    dbg!("TODO", &captures[0], position_a, position_b);
                 } else if let Some(captures) = MOVE_LETTER.captures(line) {
                     let position_a: usize = captures[1].parse().unwrap();
                     let position_b: usize = captures[2].parse().unwrap();
-                    dbg!("TODO", &captures[0], position_a, position_b);
+                    let value = buffer.remove(position_a).unwrap();
+                    buffer.insert(position_b, value);
                 } else {
                     panic!("unexpected input? {:?}", line);
                 }
