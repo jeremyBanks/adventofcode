@@ -6,6 +6,7 @@ pub use std::{
     collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque},
     convert::TryFrom,
     fmt::{Debug, Display},
+    mem::swap,
     rc::Rc,
     str::FromStr,
     time::{Duration, Instant},
@@ -17,6 +18,7 @@ pub use crossbeam::channel::{bounded, unbounded};
 pub use derive_more::*;
 pub use eyre::{eyre, WrapErr};
 pub use itertools::Itertools;
+pub use lazy_static::lazy_static;
 pub use parking_lot::{Condvar, Mutex, Once, ReentrantMutex, RwLock};
 pub use rayon::{
     iter::{
@@ -27,7 +29,7 @@ pub use rayon::{
     slice::{ParallelSlice, ParallelSliceMut},
     str::ParallelString,
 };
-pub use regex::Regex;
+pub use regex::{Regex, RegexSet};
 pub use thousands::Separable;
 
 pub use crate::common::*;
