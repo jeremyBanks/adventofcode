@@ -37,9 +37,9 @@ declare -i generation=0
 declare message
 message="r${generation}/${tree4}"
 
-declare -i tick=256
-declare -i step=16384
-declare -i drift=32768
+declare -i tick=32
+declare -i step=64
+declare -i drift=128
 ((0 == (step % tick)))
 ((step >= tick))
 ((drift >= step))
