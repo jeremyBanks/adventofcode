@@ -43,6 +43,8 @@ lazy_static = "1.4.0"
 re = "0.1.0"
 lazy-regex = "2.2.2"
 ghost-cell = "0.2.2"
+threadstack = "0.4.1"
+slotmap = "1.0.6"
 
 [profile.dev.package.backtrace]
 opt-level = 3
