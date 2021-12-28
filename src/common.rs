@@ -82,22 +82,22 @@ pub trait StrExt: AsRef<str> {
     fn usize(&self) -> usize {
         self.as_ref()
             .parse()
-            .unwrap_or_else(|_| panic!("could not parse as usize"))
+            .unwrap_or_else(|_| panic!("could not parse {:?} as usize", self.as_ref()))
     }
     fn i64(&self) -> i64 {
         self.as_ref()
             .parse()
-            .unwrap_or_else(|_| panic!("could not parse as i64"))
+            .unwrap_or_else(|_| panic!("could not parse {:?} as i64", self.as_ref()))
     }
     fn f64(&self) -> f64 {
         self.as_ref()
             .parse()
-            .unwrap_or_else(|_| panic!("could not parse as f64"))
+            .unwrap_or_else(|_| panic!("could not parse {:?} as f64", self.as_ref()))
     }
     fn u64(&self) -> u64 {
         self.as_ref()
             .parse()
-            .unwrap_or_else(|_| panic!("could not parse as u64"))
+            .unwrap_or_else(|_| panic!("could not parse {:?} as u64", self.as_ref()))
     }
     fn u8(&self) -> u8 {
         self.as_ref()
