@@ -27,3 +27,7 @@ https://adventofcode.com/2016/day/21
 </ul>
 <p>After these steps, the resulting scrambled password is <code>decab</code>.</p>
 <p>Now, you just need to generate a new scrambled password and you can access the system. Given the list of scrambling operations in your puzzle input, <em>what is the result of scrambling <code>abcdefgh</code></em>?</p>
+
+## Part Two
+
+_TODO_
