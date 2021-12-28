@@ -13,7 +13,7 @@ pub fn solution() -> Solution {
                 let line = line.as_bytes();
                 let last_dash_index = line.iter().rposition(|b| *b == b'-').unwrap();
                 let name = &line[..last_dash_index];
-                println!(name);
+                dbg!(name);
             }
 
             (String::new(), String::new())
