@@ -8,6 +8,7 @@ pub use std::{
     fmt::{Debug, Display},
     mem::swap,
     rc::Rc,
+    str,
     str::FromStr,
     time::{Duration, Instant},
 };
