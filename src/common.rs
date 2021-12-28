@@ -19,6 +19,12 @@ pub trait DebugExt: Debug {
 impl<T: Debug> DebugExt for T {}
 
 pub trait StrExt: AsRef<str> {
+    fn parse_into<T: FromStr>(&self) -> T {
+        self.as_ref()
+            .parse()
+            .unwrap_or_else(|_| panic!("parse of {:?} failed", self.as_ref()))
+    }
+
     fn split_vec(&self, delimiter: &str) -> Vec<&str> {
         self.as_ref().split(delimiter).collect()
     }
@@ -44,7 +50,23 @@ pub trait StrExt: AsRef<str> {
     }
 
     fn lines_vec(&self) -> Vec<&str> {
-        self.as_ref().lines().collect()
+        self.as_ref().lines().collect_vec()
+    }
+
+    fn partition(&self, separator: &str) -> (&str, &str) {
+        let this = self.as_ref();
+        match this.find(separator) {
+            Some(index) => (&this[..index], &this[index + 1..]),
+            None => (this, ""),
+        }
+    }
+
+    fn rpartition(&self, separator: &str) -> (&str, &str) {
+        let this = self.as_ref();
+        match this.rfind(separator) {
+            Some(index) => (&this[..index], &this[index + 1..]),
+            None => (this, ""),
+        }
     }
 }
 

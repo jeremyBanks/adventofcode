@@ -5,41 +5,40 @@ pub fn solution() -> Solution {
         year: 2016,
         day: 4,
         code: |input| {
-            let lines = input.lines_vec();
+            let mut real_sector_ids_sum: i64 = 0;
 
-            let mut real_sector_ids_sum: u32 = 0;
+            for line in input.lines() {
+                // partition the line at last `-` to get name
+                let (name, rest) = line.rpartition("-");
+                // partition the rest at first `[` to get the sector ID
+                let (sector_id, rest) = rest.partition("[");
+                let sector_id = sector_id.parse_into::<i64>();
+                // remove the last character (`]`) from the rest to get the checksum
+                let checksum = &rest[..rest.len() - 1];
 
-            for line in lines {
-                let line = line.as_bytes();
-                let last_dash_index = line.iter().rposition(|b| *b == b'-').unwrap();
-                let name = &line[..last_dash_index];
-                let rest = &line[last_dash_index + 1..];
-                let rest_split_index = rest.iter().rposition(|b| *b == b'[').unwrap();
-                let sector_id = &rest[..rest_split_index];
-                let checksum = &rest[rest_split_index + 1..rest.len() - 1];
+                let correct_checksum = {
+                    let mut letter_counts = HashMap::<char, i32>::new();
+                    for character in name.chars() {
+                        if character >= 'a' && character <= 'z' {
+                            *letter_counts.entry(character).or_default() += 1;
+                        } else {
+                            assert!(character == '-', "unexpected character");
+                        }
+                    }
 
-                let name = str::from_utf8(name).unwrap();
-                let sector_id = str::from_utf8(sector_id).unwrap();
-                let sector_id: u32 = sector_id.parse().unwrap();
-                let checksum = str::from_utf8(checksum).unwrap();
+                    // Sort letters by most-frequent, followed by alphabetically, then join the
+                    // top 5 as a String to get our result.
+                    letter_counts
+                        .keys()
+                        .sorted_by_cached_key(|c| (-letter_counts[c], *c))
+                        .collect_vec()[..5]
+                        .iter()
+                        .join("")
+                };
 
-                let mut letter_frequency = HashMap::<char, i32>::new();
-                for character in name.chars() {
-                    *letter_frequency.entry(character).or_default() += 1;
-                }
-
-                let mut sorted_name_characters =
-                    name.chars().unique().filter(|c| *c != '-').collect_vec();
-                sorted_name_characters.sort_by_cached_key(|c| (-letter_frequency[c], *c));
-
-                let actual_checksum = sorted_name_characters[..5].iter().join("");
-
-                let is_real = checksum == actual_checksum;
-
-                if is_real {
+                if checksum == correct_checksum {
                     real_sector_ids_sum += sector_id;
                 }
-                dbg!(is_real, actual_checksum, checksum);
             }
 
             (real_sector_ids_sum.to_string(), String::new())
