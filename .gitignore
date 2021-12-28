@@ -1,6 +1,6 @@
-__*cache__
+__*cache*
 *.pyc
 /.env
 /target
-.*_cache
+.*cache*
 *.pyc
