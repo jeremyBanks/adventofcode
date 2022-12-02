@@ -7,6 +7,7 @@ pub mod year2018;
 pub mod year2019;
 pub mod year2020;
 pub mod year2021;
+pub mod year2022;
 
 pub fn solutions() -> Vec<Solution> {
     let mut solutions = vec![];
@@ -17,5 +18,6 @@ pub fn solutions() -> Vec<Solution> {
     solutions.append(&mut year2019::solutions());
     solutions.append(&mut year2020::solutions());
     solutions.append(&mut year2021::solutions());
+    solutions.append(&mut year2022::solutions());
     solutions
 }

@@ -1,6 +1,11 @@
 #![allow(unused)]
 
+use std::process::ExitCode;
+use std::process::Termination;
+
 use crate::prelude::*;
+
+
 
 pub struct Solution {
     pub year: u32,
@@ -108,6 +113,33 @@ pub trait StrExt: AsRef<str> {
         self.as_ref()
             .parse()
             .unwrap_or_else(|_| panic!("could not parse as isize"))
+    }
+}
+
+
+pub fn default<T: Default>() -> T
+{
+    Default::default()
+}
+
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[allow(non_camel_case_types)]
+pub enum panic {}
+
+impl<Err> From<Err> for panic
+where
+    Err: Display + Debug,
+{
+    #[track_caller]
+    fn from(error: Err) -> Self {
+        panic!("{error}")
+    }
+}
+
+impl Termination for panic {
+    fn report(self) -> ExitCode {
+        unreachable!()
     }
 }
 
